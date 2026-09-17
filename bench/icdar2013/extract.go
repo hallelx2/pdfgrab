@@ -26,6 +26,7 @@ func main() {
 	strategy := flag.String("strategy", "lines",
 		"lines | text | mixed | auto | lines-then-mixed | fallback")
 	merge := flag.Bool("merge", false, "TableSettings.MergeSplitTokens")
+	detect := flag.Bool("detect", false, "TableSettings.DetectRegions (text-alignment region detection)")
 	oracle := flag.String("oracle", "",
 		`JSON of per-page explicit edges: {"1":{"v":[..],"h":[..]}}`)
 	flag.Parse()
@@ -67,6 +68,15 @@ func main() {
 		attempts = []pdfgrab.TableSettings{lines, text}
 	default:
 		attempts = []pdfgrab.TableSettings{lines}
+	}
+
+	// Region detection is a property of the run, not of a strategy, so
+	// it is applied to whichever attempts the strategy selected. It only
+	// affects text-derived axes; on a pure "lines" run it is inert.
+	if *detect {
+		for i := range attempts {
+			attempts[i].DetectRegions = true
+		}
 	}
 
 	// Oracle mode: the caller supplies the row/column boundaries and

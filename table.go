@@ -222,6 +222,33 @@ type TableSettings struct {
 	// grouping uses, so it only ever rejoins glyphs that word grouping
 	// would have placed in one word.
 	MergeSplitTokens bool
+
+	// DetectRegions restricts table finding to regions that look
+	// tabular by text alignment, instead of deriving edges across the
+	// whole page.
+	//
+	// Off by default, and deliberately so. It changes which tables are
+	// found, not just how they are gridded, and a detection change has
+	// burned this library before — StrategyAuto found more regions and
+	// scored slightly worse, because a region that is found but gridded
+	// badly costs more precision than it buys in recall. Turn it on,
+	// measure on your own documents, then decide.
+	//
+	// What it is for: the "lines" strategies need INTERSECTING rulings
+	// to form a cell, so a table ruled only horizontally is invisible to
+	// them. On ICDAR 2013 that is 22% of documents yielding nothing at
+	// all. Region detection reads alignment rather than rulings, so it
+	// sees those tables — and because it reports a bounded region rather
+	// than a page-wide grid, it does not fabricate tables on prose the
+	// way the bare "text" strategy does.
+	//
+	// Only affects the text-derived strategies. With "lines" the rulings
+	// already say where the table is.
+	DetectRegions bool
+
+	// TextEdge tunes region detection. Ignored unless DetectRegions is
+	// set. The zero value means DefaultTextEdgeOpts.
+	TextEdge TextEdgeOpts
 }
 
 // DefaultTableSettings returns settings with the pdfplumber default

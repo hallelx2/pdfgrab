@@ -135,7 +135,8 @@ def timed(fn: Callable[[str], Tables], pdf: str, t: Timing) -> Tables:
 # --- adapters ---------------------------------------------------------
 
 
-def pdfgrab(exe: str, strategy: str, merge: bool = False) -> Callable[[str], Tables]:
+def pdfgrab(exe: str, strategy: str, merge: bool = False,
+            detect: bool = False) -> Callable[[str], Tables]:
     """pdfgrab, via the benchmark's Go extractor binary."""
 
     def run(pdf: str) -> Tables:
@@ -144,6 +145,8 @@ def pdfgrab(exe: str, strategy: str, merge: bool = False) -> Callable[[str], Tab
         cmd = [exe, "-strategy", strategy]
         if merge:
             cmd.append("-merge")
+        if detect:
+            cmd.append("-detect")
         cmd.append(pdf)
         out = subprocess.run(cmd, capture_output=True, timeout=120).stdout
         return [t["rows"] for t in json.loads(out or b"[]")]
@@ -261,6 +264,12 @@ def build_adapters(exe: str, gx_exe: str = "") -> list[Adapter]:
                 note="the library under test"),
         Adapter("pdfgrab (auto)", pdfgrab(exe, "auto"),
                 note="one-axis-ruled support, opt-in"),
+        Adapter("pdfgrab (text+detect)", pdfgrab(exe, "text", detect=True),
+                note="HAL-1362: text-alignment region detection"),
+        Adapter("pdfgrab (fallback+detect)", pdfgrab(exe, "fallback", detect=True),
+                note="HAL-1362: lines, then text within detected regions"),
+        Adapter("pdfgrab (text, no detect)", pdfgrab(exe, "text"),
+                note="control: page-wide text strategy"),
         Adapter("pdfplumber (lines)", pdfplumber_tables("lines"),
                 module="pdfplumber", install="pdfplumber",
                 note="the implementation pdfgrab is a port of"),
