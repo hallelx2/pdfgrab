@@ -6,6 +6,14 @@
 **Dataset:** ICDAR 2013 Table Competition, Smock's corrected edition — 125 born-digital PDFs, 39,524 ground-truth adjacency relations
 **Reference:** pdfplumber 0.11.9
 
+> **Metric note, added 2026-09-17.** The F1 figures below are **pooled** —
+> every adjacency relation across the corpus scored in one batch. The ICDAR
+> 2013 protocol averages **per document**, which puts pdfgrab at **0.442** and
+> pdfplumber at **0.458** on the same data. These numbers are left as they were
+> measured; see
+> [2026-09-17](2026-09-17-field-comparison-and-metric-correction.md) for the
+> corrected metric and a comparison against the full field.
+
 ## Result
 
 | system | precision | recall | F1 |
