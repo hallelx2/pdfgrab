@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable
+package pdfgrab
 
 // finder.go is the Go port of pdfplumber/table.py's TableFinder. The
 // algorithm runs in four stages, each implemented as a pure function
@@ -27,7 +27,7 @@ package pdftable
 //                       then-left-to-right.
 //
 // Coordinate system note: pdfplumber operates in image space (Y growing
-// DOWN). pdftable uses PDF user space (Y growing UP). The intersection
+// DOWN). pdfgrab uses PDF user space (Y growing UP). The intersection
 // algorithm is invariant under that flip — "below" in image space is
 // "below" in user space if we substitute "lower Y" — but the wording in
 // pdfplumber's source talks about "directly below and directly right".
@@ -43,7 +43,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/hallelx2/pdftable/internal/layout"
+	"github.com/hallelx2/pdfgrab/internal/layout"
 )
 
 // Intersection records one crossing point: an (x, y) tuple plus the
@@ -882,7 +882,7 @@ func ensureSupportedStrategies(s TableSettings) error {
 // the "explicit" strategy on an axis but supplies fewer than two
 // coordinates. pdfplumber raises ValueError with the same message.
 func errExplicitNeedsTwo(axis string) error {
-	return fmt.Errorf("pdftable: %s_strategy=%q requires at least two coordinates in Explicit%sLines",
+	return fmt.Errorf("pdfgrab: %s_strategy=%q requires at least two coordinates in Explicit%sLines",
 		axis, StrategyExplicit, axisFieldName(axis))
 }
 

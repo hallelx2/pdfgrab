@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable
+package pdfgrab
 
 import (
 	"fmt"
@@ -9,8 +9,8 @@ import (
 	"math"
 	"strings"
 
-	"github.com/hallelx2/pdftable/internal/layout"
-	"github.com/hallelx2/pdftable/internal/pdf"
+	"github.com/hallelx2/pdfgrab/internal/layout"
+	"github.com/hallelx2/pdfgrab/internal/pdf"
 )
 
 // Page is one page of a PDF document. The interface (not a struct) is
@@ -619,7 +619,7 @@ func (p *page) FindTables(settings TableSettings) ([]TableFinder, error) {
 			}
 		}
 		if nV > s.MaxEdgesPerAxis || nH > s.MaxEdgesPerAxis {
-			log.Printf("pdftable: skipping table finding on page %d: %d vertical / %d horizontal edges exceed MaxEdgesPerAxis=%d (page is not a real table)",
+			log.Printf("pdfgrab: skipping table finding on page %d: %d vertical / %d horizontal edges exceed MaxEdgesPerAxis=%d (page is not a real table)",
 				p.number, nV, nH, s.MaxEdgesPerAxis)
 			return nil, nil
 		}
@@ -630,7 +630,7 @@ func (p *page) FindTables(settings TableSettings) ([]TableFinder, error) {
 	// Second safety cap at the intersection stage — bounds the work
 	// even if some future input defeats the grid-indexed cell finder.
 	if s.MaxIntersections > 0 && len(intersections) > s.MaxIntersections {
-		log.Printf("pdftable: skipping table finding on page %d: %d intersections exceed MaxIntersections=%d",
+		log.Printf("pdfgrab: skipping table finding on page %d: %d intersections exceed MaxIntersections=%d",
 			p.number, len(intersections), s.MaxIntersections)
 		return nil, nil
 	}

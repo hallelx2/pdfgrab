@@ -21,7 +21,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/hallelx2/pdftable"
+	"github.com/hallelx2/pdfgrab"
 )
 
 func main() {
@@ -31,7 +31,7 @@ func main() {
 	}
 	path := os.Args[1]
 
-	doc, err := pdftable.OpenFile(path)
+	doc, err := pdfgrab.OpenFile(path)
 	if err != nil {
 		log.Fatalf("OpenFile %s: %v", path, err)
 	}
@@ -42,10 +42,10 @@ func main() {
 		log.Fatalf("Page(1): %v", err)
 	}
 
-	settings := pdftable.DefaultTableSettings()
+	settings := pdfgrab.DefaultTableSettings()
 	// Uncomment to ignore Rect outlines (filled cell backgrounds
 	// that aren't real row boundaries):
-	// settings.VerticalStrategy = pdftable.StrategyLinesStrict
+	// settings.VerticalStrategy = pdfgrab.StrategyLinesStrict
 
 	tables, err := page.ExtractTables(settings)
 	if err != nil {

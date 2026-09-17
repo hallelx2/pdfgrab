@@ -25,6 +25,17 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
+      - name: Gofmt
+        # Ubuntu only: gofmt is platform-independent, and running it on all
+        # three would report the same drift three times.
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          drift=$(gofmt -l .)
+          if [ -n "$drift" ]; then
+            echo "::error::gofmt drift in:"; echo "$drift"
+            exit 1
+          fi
+
       - name: Go vet
         run: go vet ./...
 

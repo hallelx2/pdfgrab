@@ -1,4 +1,4 @@
-# The hybrid ceiling — pdftable with perfect table boundaries
+# The hybrid ceiling — pdfgrab with perfect table boundaries
 
 **Date:** 2026-08-03
 **Commit:** `0b39b95`
@@ -9,21 +9,21 @@
 
 | system | precision | recall | F1 |
 | --- | --- | --- | --- |
-| pdftable, current best (`lines`) | 0.865 | 0.229 | **0.362** |
-| **pdftable + ORACLE boundaries** | **0.948** | **0.922** | **0.935** |
-| pdftable + oracle + `MergeSplitTokens` | 0.806 | 0.660 | 0.726 |
+| pdfgrab, current best (`lines`) | 0.865 | 0.229 | **0.362** |
+| **pdfgrab + ORACLE boundaries** | **0.948** | **0.922** | **0.935** |
+| pdfgrab + oracle + `MergeSplitTokens` | 0.806 | 0.660 | 0.726 |
 
 107 documents (single-region pages).
 
 ## What it means
 
-**0.362 → 0.935.** Given the right grid, pdftable extracts almost perfectly.
+**0.362 → 0.935.** Given the right grid, pdfgrab extracts almost perfectly.
 
 So essentially the entire gap in the end-to-end score is **table structure**, not text extraction. The cell-filling, the coordinates, the text fidelity — all the work of the last two days — is not the limiting factor. Finding the rows and columns is.
 
 That is a clear verdict on the hybrid: **a layout model that outputs row/column structure is worth deploying.** It converts almost the whole gap.
 
-It also confirms the division of labour. pdftable keeps what a generative model cannot give: exact cell text and exact coordinates for citation highlighting. The model supplies only geometry.
+It also confirms the division of labour. pdfgrab keeps what a generative model cannot give: exact cell text and exact coordinates for citation highlighting. The model supplies only geometry.
 
 ## `MergeSplitTokens` must be OFF when boundaries come from a model
 
@@ -36,16 +36,16 @@ It also confirms the division of labour. pdftable keeps what a generative model 
 No new dependency and no HTTP client in the library:
 
 ```go
-s := pdftable.DefaultTableSettings()
-s.VerticalStrategy   = pdftable.StrategyExplicit
-s.HorizontalStrategy = pdftable.StrategyExplicit
+s := pdfgrab.DefaultTableSettings()
+s.VerticalStrategy   = pdfgrab.StrategyExplicit
+s.HorizontalStrategy = pdfgrab.StrategyExplicit
 s.ExplicitVerticalLines   = colBoundaries // from the layout model
 s.ExplicitHorizontalLines = rowBoundaries
 s.MergeSplitTokens = false                // see above
 tables, _ := page.ExtractTables(s)
 ```
 
-The caller owns the model call. pdftable stays deterministic and offline.
+The caller owns the model call. pdfgrab stays deterministic and offline.
 
 ## Two harness bugs, both worth recording
 
@@ -56,7 +56,7 @@ The first version of this experiment reported **0.119 F1 with perfect input** �
 
 Fixing (1) moved 0.119 → 0.782; fixing (2) moved 0.782 → 0.935.
 
-A third suspicion turned out to be unfounded: the ground-truth Y origin was checked against pdfplumber word positions and is bottom-left, the same space pdftable reports (GT `y1=619.0` vs word `y0=616.9` on `eu-002` — a box-versus-glyph difference, not a flip). No conversion needed.
+A third suspicion turned out to be unfounded: the ground-truth Y origin was checked against pdfplumber word positions and is bottom-left, the same space pdfgrab reports (GT `y1=619.0` vs word `y0=616.9` on `eu-002` — a box-versus-glyph difference, not a flip). No conversion needed.
 
 **The lesson is the same one from the font work:** a measurement that disagrees violently with expectation is far more likely to be a broken measurement than a broken system. Both times, checking the harness against a known-good case found the fault in the harness.
 
@@ -67,5 +67,5 @@ Single-region pages only — 107 of 125 documents. Pages carrying several tables
 ## Reproduce
 
 ```sh
-python bench/icdar2013/oracle.py ~/.cache/pdftable-bench/ICDAR-2013-Table-Competition-Corrected <extractor>
+python bench/icdar2013/oracle.py ~/.cache/pdfgrab-bench/ICDAR-2013-Table-Competition-Corrected <extractor>
 ```

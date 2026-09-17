@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable
+package pdfgrab
 
 // finder_bench_test.go pins the performance characteristics of the
 // cell-finding pipeline. The dense-grid cases are a regression guard
@@ -20,7 +20,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hallelx2/pdftable/internal/layout"
+	"github.com/hallelx2/pdfgrab/internal/layout"
 )
 
 // denseGridEdges builds the edge set for an n x n cell lattice:

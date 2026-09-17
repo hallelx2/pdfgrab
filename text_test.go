@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable
+package pdfgrab
 
 import (
 	"math"
@@ -399,8 +399,8 @@ func TestExpandLigatures(t *testing.T) {
 		"ﬄ": "ffl",
 		"ﬅ": "st",
 		"ﬆ": "st",
-		"A":      "A", // pass-through
-		"":       "", // pass-through
+		"A": "A", // pass-through
+		"":  "",  // pass-through
 	}
 	for in, want := range cases {
 		if got := expandLigatures(in); got != want {
@@ -415,14 +415,14 @@ func TestExpandLigatures(t *testing.T) {
 func openHelloWorldDoc() (Document, error) {
 	// We import testdata indirectly via Open: that means this test
 	// can't live in the _test package because testdata is in a sub-
-	// directory and we're already in the pdftable package. Build a
+	// directory and we're already in the pdfgrab package. Build a
 	// dependency-free fixture inline instead — same structure as
 	// testdata.Hello().
 	return OpenBytes(helloBytes())
 }
 
 // helloBytes returns the same PDF as testdata.Hello(), inlined so this
-// _test.go file inside the pdftable package doesn't pull in a
+// _test.go file inside the pdfgrab package doesn't pull in a
 // dependency on testdata. (testdata/fixtures.go is in a sub-package and
 // importing it here would cause a cycle.)
 func helloBytes() []byte {

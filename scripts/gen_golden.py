@@ -1,4 +1,4 @@
-"""Generate golden-file expected outputs for pdftable's parity tests.
+"""Generate golden-file expected outputs for pdfgrab's parity tests.
 
 Run from the repo root after copying the fixture PDFs into
 testdata/golden/:
@@ -14,9 +14,9 @@ sibling JSON files:
                                     `lines` strategy (v0.2.0 tests).
 
 Word goldens use image-space "top" / "bottom" translated into
-PDF-user-space y0 / y1 so they match pdftable.Word fields directly.
+PDF-user-space y0 / y1 so they match pdfgrab.Word fields directly.
 Table goldens are the raw [[[str]]] output of pdfplumber's
-Table.extract() — pdftable's parity test normalises whitespace before
+Table.extract() — pdfgrab's parity test normalises whitespace before
 comparing, so intra-cell line breaks ("A\\nB") match space-separated
 output ("A B") and vice versa.
 

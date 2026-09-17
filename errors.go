@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License. See LICENSE file in the project root.
 
-package pdftable
+package pdfgrab
 
 import "errors"
 
@@ -19,21 +19,21 @@ var (
 	// ErrInvalidPDF is returned by Open / OpenBytes / OpenFile when the
 	// input bytes can't be parsed as a PDF. The underlying pdfcpu error
 	// is wrapped so callers can still inspect the details with errors.As.
-	ErrInvalidPDF = errors.New("pdftable: invalid PDF")
+	ErrInvalidPDF = errors.New("pdfgrab: invalid PDF")
 
 	// ErrPageOutOfRange is returned by Document.Page when n is < 1 or
 	// > NumPages(). The PDF page index is 1-based, matching pdfplumber.
-	ErrPageOutOfRange = errors.New("pdftable: page out of range")
+	ErrPageOutOfRange = errors.New("pdfgrab: page out of range")
 
 	// ErrUnsupported is returned when we hit a PDF feature this library
 	// does not yet implement (e.g. an exotic CMap, an unsupported XObject
 	// subtype, vertical writing). The error string names the feature.
-	ErrUnsupported = errors.New("pdftable: unsupported feature")
+	ErrUnsupported = errors.New("pdfgrab: unsupported feature")
 
 	// ErrEncrypted is returned when the PDF is encrypted and we can't
 	// decrypt it with the empty password. Full encryption support is
 	// out of scope for the initial release — callers that need it can
 	// pre-decrypt with pdfcpu's api.Decrypt and feed the cleaned bytes
 	// to OpenBytes.
-	ErrEncrypted = errors.New("pdftable: encrypted PDF (decryption not yet supported)")
+	ErrEncrypted = errors.New("pdfgrab: encrypted PDF (decryption not yet supported)")
 )

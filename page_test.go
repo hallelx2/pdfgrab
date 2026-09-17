@@ -1,15 +1,15 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable_test
+package pdfgrab_test
 
 import (
 	"math"
 	"strings"
 	"testing"
 
-	"github.com/hallelx2/pdftable"
-	"github.com/hallelx2/pdftable/testdata"
+	"github.com/hallelx2/pdfgrab"
+	"github.com/hallelx2/pdfgrab/testdata"
 )
 
 // TestCharsHelloWorld walks the hand-crafted "Hello, world!" page
@@ -24,7 +24,7 @@ import (
 //     non-space chars).
 //  3. Y baseline is roughly where the content stream put it (720).
 func TestCharsHelloWorld(t *testing.T) {
-	doc, err := pdftable.OpenBytes(testdata.Hello())
+	doc, err := pdfgrab.OpenBytes(testdata.Hello())
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
@@ -89,7 +89,7 @@ func TestCharsHelloWorld(t *testing.T) {
 //   - one horizontal line from (100, 580) to (150, 580)
 //   - one vertical line from (100, 500) to (100, 550)
 func TestRectsRulings(t *testing.T) {
-	doc, err := pdftable.OpenBytes(testdata.Rules())
+	doc, err := pdfgrab.OpenBytes(testdata.Rules())
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
@@ -151,7 +151,7 @@ func TestRectsRulings(t *testing.T) {
 // TestObjectsAggregator confirms Objects() bundles all four primitive
 // collections in a single call and matches the per-type accessors.
 func TestObjectsAggregator(t *testing.T) {
-	doc, err := pdftable.OpenBytes(testdata.Rules())
+	doc, err := pdfgrab.OpenBytes(testdata.Rules())
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
@@ -179,7 +179,7 @@ func TestObjectsAggregator(t *testing.T) {
 // minimal real PDF without crashing or producing nonsense", which is
 // the smoke-test floor for the v0.0.1 release.
 func TestRealWorldSimplePDF(t *testing.T) {
-	doc, err := pdftable.OpenFile("testdata/simple1.pdf")
+	doc, err := pdfgrab.OpenFile("testdata/simple1.pdf")
 	if err != nil {
 		t.Fatalf("OpenFile: %v", err)
 	}

@@ -1,13 +1,13 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable
+package pdfgrab
 
 import (
 	"fmt"
 	"iter"
 
-	"github.com/hallelx2/pdftable/internal/pdf"
+	"github.com/hallelx2/pdfgrab/internal/pdf"
 )
 
 // Document represents one open PDF file. The interface (not a struct)

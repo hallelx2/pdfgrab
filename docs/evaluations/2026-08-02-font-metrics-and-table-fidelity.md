@@ -20,7 +20,7 @@
 ### 1. Flat 500 width for the standard 14 fonts
 
 PDF 1.7 §9.6.2.2 lets the 14 standard fonts omit `/Widths`; a consumer is
-expected to already know their metrics. pdftable did not, and fell through
+expected to already know their metrics. pdfgrab did not, and fell through
 to a flat 500/1000 guess for every glyph — `i` (222) and `m` (833) got
 identical widths, and the error accumulated along each line.
 
@@ -35,7 +35,7 @@ Both fonts carry their own built-in encoding and neither declares
 `0x61` decoded as `a` rather than `alpha` — a *text*-correctness failure,
 not a metrics one. Any document using Symbol for Greek extracted nonsense.
 
-pdfplumber 0.11.9 still exhibits this; pdftable now does not.
+pdfplumber 0.11.9 still exhibits this; pdfgrab now does not.
 
 ### 3. Glyph boxes sat `descent × size` too high
 
@@ -71,7 +71,7 @@ made it dangerous. A missing value is detectable downstream; a plausible
 wrong sign is not.
 
 **pdfplumber has the same defect.** On the same row it returns `16,048`
-without the closing paren. pdftable is now strictly better than its
+without the closing paren. pdfgrab is now strictly better than its
 reference here.
 
 ### 5. Small type over-merged into single runs
@@ -91,8 +91,8 @@ was filed as a defect. **It is not** — that gap is in the source document.
 The rendered page shows it, and poppler extracts it identically. 3M's
 filing agent typeset it that way, which is common in SEC EDGAR documents.
 
-The error was methodological: the original comparison was pdftable's table
-output against pdftable's *own* text output. Internal agreement proves the
+The error was methodological: the original comparison was pdfgrab's table
+output against pdfgrab's *own* text output. Internal agreement proves the
 two code paths disagree, not which one is right. Correcting it required an
 external reference — a rendered page and a second extractor.
 

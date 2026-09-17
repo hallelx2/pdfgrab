@@ -9,7 +9,7 @@ hypothesis it tested is disproved.
 ## Hypothesis
 
 The [ICDAR 2013 evaluation](2026-08-02-icdar2013-table-structure.md) found
-28 of 125 documents (22%) where pdftable detected **no table at all**, and
+28 of 125 documents (22%) where pdfgrab detected **no table at all**, and
 attributed it to tables ruled on one axis only. `lines` builds cells from
 *intersecting* rulings, so a horizontally-ruled table yields none.
 
@@ -32,9 +32,9 @@ holds.
 
 | system | precision | recall | F1 |
 | --- | --- | --- | --- |
-| pdftable (`lines`) | 0.865 | 0.229 | **0.362** |
-| pdftable (`auto`) | 0.797 | 0.231 | **0.358** |
-| pdftable (`auto` + MergeSplitTokens) | 0.826 | 0.230 | 0.359 |
+| pdfgrab (`lines`) | 0.865 | 0.229 | **0.362** |
+| pdfgrab (`auto`) | 0.797 | 0.231 | **0.358** |
+| pdfgrab (`auto` + MergeSplitTokens) | 0.826 | 0.230 | 0.359 |
 | pdfplumber (`lines`) | 0.868 | 0.235 | 0.370 |
 
 Recall moved 0.229 → 0.231. Precision fell 0.865 → 0.797. **Net slightly
@@ -94,7 +94,7 @@ Revised split for the hybrid:
 
 - **layout/VLM model → rows, columns and spans** (not just "where is the
   table")
-- **pdftable text layer → cell contents and coordinates**, which stays
+- **pdfgrab text layer → cell contents and coordinates**, which stays
   exact and keeps citation geometry
 
 ## Reproduce

@@ -1,4 +1,4 @@
-"""Generate text-strategy golden files for pdftable's parity tests.
+"""Generate text-strategy golden files for pdfgrab's parity tests.
 
 Run from the repo root after copying any new borderless / text-strategy
 fixture PDFs into testdata/golden/:

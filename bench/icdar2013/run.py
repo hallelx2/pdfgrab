@@ -4,10 +4,10 @@
     python bench/icdar2013/run.py
 
 Downloads the dataset (~12 MB) into a scratch directory, builds the Go
-extractor, scores pdftable against the ground truth, and prints a result
+extractor, scores pdfgrab against the ground truth, and prints a result
 table. pdfplumber is scored alongside as a reference point — the question
 "is 0.36 good?" is unanswerable without a baseline, and pdfplumber is the
-implementation pdftable is a port of.
+implementation pdfgrab is a port of.
 
 Pass --limit N to score only the first N documents while iterating.
 """
@@ -38,7 +38,7 @@ DIRNAME = "ICDAR-2013-Table-Competition-Corrected"
 
 def scratch() -> str:
     d = os.environ.get("PDFTABLE_BENCH_DIR") or os.path.join(
-        os.path.expanduser("~"), ".cache", "pdftable-bench"
+        os.path.expanduser("~"), ".cache", "pdfgrab-bench"
     )
     os.makedirs(d, exist_ok=True)
     return d
@@ -73,10 +73,10 @@ def build_extractor(dest: str) -> str:
                        capture_output=True)
     subprocess.run(
         ["go", "mod", "edit", "-replace",
-         f"github.com/hallelx2/pdftable={REPO.replace(os.sep, '/')}"],
+         f"github.com/hallelx2/pdfgrab={REPO.replace(os.sep, '/')}"],
         cwd=mod, check=True, capture_output=True)
     subprocess.run(
-        ["go", "mod", "edit", "-require", "github.com/hallelx2/pdftable@v0.0.0"],
+        ["go", "mod", "edit", "-require", "github.com/hallelx2/pdfgrab@v0.0.0"],
         cwd=mod, check=True, capture_output=True)
     subprocess.run(["go", "mod", "tidy"], cwd=mod, check=True, capture_output=True)
     subprocess.run(["go", "build", "-o", exe, "."], cwd=mod, check=True)

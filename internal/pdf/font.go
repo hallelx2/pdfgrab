@@ -588,11 +588,11 @@ var adobeGlyphTable = map[string]string{
 	"divide":   "÷",
 
 	// --- Common ligatures (used in /Differences arrays) -------------
-	"fi":  "ﬁ",
-	"fl":  "ﬂ",
-	"ff":  "ﬀ",
-	"ffi": "ﬃ",
-	"ffl": "ﬄ",
+	"fi":    "ﬁ",
+	"fl":    "ﬂ",
+	"ff":    "ﬀ",
+	"ffi":   "ﬃ",
+	"ffl":   "ﬄ",
 	"longs": "ſ",
 }
 
@@ -616,7 +616,7 @@ var (
 // WinAnsiEncoding / PDFDocEncoding (each -1 if the glyph is unmapped
 // in that encoding).
 type encodingRow struct {
-	name           string
+	name               string
 	std, mac, win, pdf int
 }
 

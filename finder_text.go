@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable
+package pdfgrab
 
 // finder_text.go implements the "text" and "explicit" edge-derivation
 // strategies that complement the "lines" / "lines_strict" strategies in
@@ -28,7 +28,7 @@ package pdftable
 // page's bbox.
 //
 // Coordinate system: pdfplumber works in image space (Y growing down,
-// "top" = smaller Y). pdftable uses PDF user space (Y growing up). Two
+// "top" = smaller Y). pdfgrab uses PDF user space (Y growing up). Two
 // translations matter:
 //
 //   - pdfplumber's "top" is our Y1 (the visually-upper edge of a word's
@@ -43,7 +43,7 @@ import (
 	"math"
 	"sort"
 
-	"github.com/hallelx2/pdftable/internal/layout"
+	"github.com/hallelx2/pdfgrab/internal/layout"
 )
 
 // wordEdgeTolerance is the per-axis tolerance used when clustering
@@ -279,11 +279,11 @@ func explicitVerticalEdges(xs []float64, pageY0, pageY1 float64) []layout.Edge {
 	out := make([]layout.Edge, 0, len(xs))
 	for _, x := range xs {
 		if math.IsNaN(x) || math.IsInf(x, 0) {
-			log.Printf("pdftable: explicit vertical line %v ignored (non-finite)", x)
+			log.Printf("pdfgrab: explicit vertical line %v ignored (non-finite)", x)
 			continue
 		}
 		if pageY1 <= pageY0 {
-			log.Printf("pdftable: explicit vertical line %v ignored (page height is zero)", x)
+			log.Printf("pdfgrab: explicit vertical line %v ignored (page height is zero)", x)
 			continue
 		}
 		out = append(out, layout.Edge{
@@ -308,11 +308,11 @@ func explicitHorizontalEdges(ys []float64, pageX0, pageX1 float64) []layout.Edge
 	out := make([]layout.Edge, 0, len(ys))
 	for _, y := range ys {
 		if math.IsNaN(y) || math.IsInf(y, 0) {
-			log.Printf("pdftable: explicit horizontal line %v ignored (non-finite)", y)
+			log.Printf("pdfgrab: explicit horizontal line %v ignored (non-finite)", y)
 			continue
 		}
 		if pageX1 <= pageX0 {
-			log.Printf("pdftable: explicit horizontal line %v ignored (page width is zero)", y)
+			log.Printf("pdfgrab: explicit horizontal line %v ignored (page width is zero)", y)
 			continue
 		}
 		out = append(out, layout.Edge{

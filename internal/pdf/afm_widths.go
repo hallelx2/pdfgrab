@@ -9,7 +9,7 @@ package pdf
 // spec (viewers are expected to already know their metrics), so a PDF
 // that uses plain "Helvetica" with no embedded font program and no
 // /Widths array is fully spec-compliant -- and until this table existed,
-// pdftable had no way to know that font's actual glyph widths, and fell
+// pdfgrab had no way to know that font's actual glyph widths, and fell
 // back to a flat 500/1000 guess for every glyph (see Font.CharWidth).
 // That flat guess is what produced the up-to-~10pt word-bbox drift
 // documented in the README's parity notes.

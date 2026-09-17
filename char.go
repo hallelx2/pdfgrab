@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License. See LICENSE file in the project root.
 
-package pdftable
+package pdfgrab
 
 // This file defines the public per-page object types. Naming mirrors
 // pdfplumber's char/line/rect/curve objects, but field names follow Go

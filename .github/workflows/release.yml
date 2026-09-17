@@ -1,0 +1,85 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Tag → GitHub Release → proxy.golang.org
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+          cache: true
+
+      - name: Validate tag is semver
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::tag '$tag' is not a valid Go-module semver (vX.Y.Z[-pre][+meta])"
+            exit 1
+          fi
+          echo "tag $tag accepted"
+
+      - name: Verify the tag has a CHANGELOG entry
+        # A release with no changelog section is how v0.4.0 shipped
+        # undocumented. Fail the release rather than discover it later.
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          if ! grep -q "^## \[${version}\]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no '## [${version}]' section"
+            exit 1
+          fi
+          echo "changelog entry for ${version} found"
+
+      - name: Verify tidy
+        run: |
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum
+
+      - name: Vet + build + test
+        run: |
+          test -z "$(gofmt -l .)" || { echo "::error::gofmt drift"; gofmt -l .; exit 1; }
+          go vet ./...
+          # Inject the tag into the CLI so `pdfgrab version` reports the
+          # release rather than a literal someone has to remember to bump.
+          go build -ldflags "-X main.version=${GITHUB_REF_NAME}" ./...
+          go test -race -count=1 -timeout=10m ./...
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          body: |
+            Install:
+
+            ```bash
+            go get github.com/${{ github.repository }}@${{ github.ref_name }}
+            ```
+
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/CHANGELOG.md)
+            for the curated notes. Commit-level changelog auto-generated below.
+
+      - name: Warm proxy.golang.org
+        # Pull the module through the proxy so pkg.go.dev indexes this version
+        # immediately instead of waiting for the next scan.
+        run: |
+          module=$(go list -m)
+          tag="${GITHUB_REF_NAME}"
+          echo "warming proxy for $module@$tag"
+          curl -fsSL "https://proxy.golang.org/${module}/@v/${tag}.info" || true
+          curl -fsSL "https://proxy.golang.org/${module}/@v/${tag}.mod"  || true
+          curl -fsSL "https://sum.golang.org/lookup/${module}@${tag}"    || true

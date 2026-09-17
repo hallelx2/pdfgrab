@@ -5,11 +5,11 @@
 // table-finding: edges, edge-derivation from Lines/Rects/Curves, and
 // edge merging (snap + join).
 //
-// The split between this internal package and the public pdftable
+// The split between this internal package and the public pdfgrab
 // package mirrors the pdfplumber split between
 // pdfplumber/utils/geometry.py (edge maths) and pdfplumber/table.py
 // (the TableFinder). Keeping the edge maths here lets us evolve the
-// representation freely while the public surface in pdftable's
+// representation freely while the public surface in pdfgrab's
 // table.go / finder.go stays stable.
 //
 // Coordinate system: PDF user space — origin at bottom-left, Y growing
@@ -133,8 +133,8 @@ func (e Edge) normalise() Edge {
 
 // LineSegment is a minimal struct describing a drawn straight-line
 // segment. It exists so this package doesn't have to import the
-// public pdftable types — keeps the dependency direction one-way
-// (pdftable depends on layout, not the other way round).
+// public pdfgrab types — keeps the dependency direction one-way
+// (pdfgrab depends on layout, not the other way round).
 type LineSegment struct {
 	X0, Y0, X1, Y1 float64
 	Width          float64

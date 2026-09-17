@@ -48,85 +48,85 @@ func getOperatorTable() map[string]opHandler {
 
 func buildOperatorTable() map[string]opHandler {
 	return map[string]opHandler{
-	// --- Graphics state ----
-	"q":  opSaveState,
-	"Q":  opRestoreState,
-	"cm": opConcatMatrix,
-	"w":  opLineWidth,
-	"J":  opNoop, // line cap
-	"j":  opNoop, // line join
-	"M":  opNoop, // miter limit
-	"d":  opNoop, // line dash
-	"ri": opNoop, // rendering intent
-	"i":  opNoop, // flatness
-	"gs": opNoop, // gstate dict (name)
+		// --- Graphics state ----
+		"q":  opSaveState,
+		"Q":  opRestoreState,
+		"cm": opConcatMatrix,
+		"w":  opLineWidth,
+		"J":  opNoop, // line cap
+		"j":  opNoop, // line join
+		"M":  opNoop, // miter limit
+		"d":  opNoop, // line dash
+		"ri": opNoop, // rendering intent
+		"i":  opNoop, // flatness
+		"gs": opNoop, // gstate dict (name)
 
-	// --- Path construction ----
-	"m":  opMove,
-	"l":  opLine,
-	"c":  opCurve,
-	"v":  opCurveV,
-	"y":  opCurveY,
-	"h":  opClosePath,
-	"re": opRectangle,
+		// --- Path construction ----
+		"m":  opMove,
+		"l":  opLine,
+		"c":  opCurve,
+		"v":  opCurveV,
+		"y":  opCurveY,
+		"h":  opClosePath,
+		"re": opRectangle,
 
-	// --- Path painting ----
-	"S":  opStroke,
-	"s":  opCloseStroke,
-	"f":  opFill,
-	"F":  opFill, // obsolete alias
-	"f*": opFillEvenOdd,
-	"B":  opFillStroke,
-	"B*": opFillStrokeEvenOdd,
-	"b":  opCloseFillStroke,
-	"b*": opCloseFillStrokeEvenOdd,
-	"n":  opEndPath,
+		// --- Path painting ----
+		"S":  opStroke,
+		"s":  opCloseStroke,
+		"f":  opFill,
+		"F":  opFill, // obsolete alias
+		"f*": opFillEvenOdd,
+		"B":  opFillStroke,
+		"B*": opFillStrokeEvenOdd,
+		"b":  opCloseFillStroke,
+		"b*": opCloseFillStrokeEvenOdd,
+		"n":  opEndPath,
 
-	// --- Clipping ----
-	"W":  opNoop,
-	"W*": opNoop,
+		// --- Clipping ----
+		"W":  opNoop,
+		"W*": opNoop,
 
-	// --- Text state ----
-	"Tc": opTc,
-	"Tw": opTw,
-	"Tz": opTz,
-	"TL": opTL,
-	"Tf": opTf,
-	"Tr": opTr,
-	"Ts": opTrise,
+		// --- Text state ----
+		"Tc": opTc,
+		"Tw": opTw,
+		"Tz": opTz,
+		"TL": opTL,
+		"Tf": opTf,
+		"Tr": opTr,
+		"Ts": opTrise,
 
-	// --- Text objects & positioning ----
-	"BT": opBeginText,
-	"ET": opEndText,
-	"Td": opTd,
-	"TD": opTD,
-	"Tm": opTm,
-	"T*": opTStar,
+		// --- Text objects & positioning ----
+		"BT": opBeginText,
+		"ET": opEndText,
+		"Td": opTd,
+		"TD": opTD,
+		"Tm": opTm,
+		"T*": opTStar,
 
-	// --- Text showing ----
-	"Tj": opTj,
-	"TJ": opTJ,
-	"'":  opQuote,       // move to next line and show.
-	"\"": opDoubleQuote, // set spacing, move, show.
+		// --- Text showing ----
+		"Tj": opTj,
+		"TJ": opTJ,
+		"'":  opQuote,       // move to next line and show.
+		"\"": opDoubleQuote, // set spacing, move, show.
 
-	// --- Colour (we don't track but pop the operands) ----
-	"CS": opNoop, "cs": opNoop,
-	"SC": opNoop, "sc": opNoop,
-	"SCN": opNoop, "scn": opNoop,
-	"G": opNoop, "g": opNoop,
-	"RG": opNoop, "rg": opNoop,
-	"K": opNoop, "k": opNoop,
-	"sh": opNoop,
+		// --- Colour (we don't track but pop the operands) ----
+		"CS": opNoop, "cs": opNoop,
+		"SC": opNoop, "sc": opNoop,
+		"SCN": opNoop, "scn": opNoop,
+		"G": opNoop, "g": opNoop,
+		"RG": opNoop, "rg": opNoop,
+		"K": opNoop, "k": opNoop,
+		"sh": opNoop,
 
-	// --- XObject invocation ----
-	"Do": opDo,
+		// --- XObject invocation ----
+		"Do": opDo,
 
-	// --- Marked content (passthrough) ----
-	"BMC": opNoop, "BDC": opNoop, "EMC": opNoop,
-	"MP": opNoop, "DP": opNoop,
+		// --- Marked content (passthrough) ----
+		"BMC": opNoop, "BDC": opNoop, "EMC": opNoop,
+		"MP": opNoop, "DP": opNoop,
 
-	// --- Compatibility ----
-	"BX": opNoop, "EX": opNoop,
+		// --- Compatibility ----
+		"BX": opNoop, "EX": opNoop,
 	}
 }
 

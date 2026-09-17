@@ -1,4 +1,4 @@
-module github.com/hallelx2/pdftable
+module github.com/hallelx2/pdfgrab
 
 go 1.25.0
 

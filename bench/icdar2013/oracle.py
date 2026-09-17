@@ -1,7 +1,7 @@
 """Measure the CEILING of a layout-model hybrid.
 
-Feeds pdftable the ground-truth row and column boundaries — the output a
-perfect layout model would produce — and scores what comes back. pdftable
+Feeds pdfgrab the ground-truth row and column boundaries — the output a
+perfect layout model would produce — and scores what comes back. pdfgrab
 then does only the part it is good at: filling cells from the text layer
 and reporting exact coordinates.
 
@@ -27,7 +27,7 @@ between adjacent columns is the midpoint of the gap between them. That
 yields exactly ncols+1 lines, which is what a grid actually is.
 
 Ground-truth boxes are in PDF points with the origin bottom-left — the
-same space pdftable reports — verified against pdfplumber word positions
+same space pdfgrab reports — verified against pdfplumber word positions
 (GT y1=619.0 vs word y0=616.9 on eu-002; a box-vs-glyph difference, not a
 flip). No conversion is needed.
 """
@@ -205,9 +205,9 @@ def main() -> int:
     print("-" * 74)
     for name in variants:
         p, r, f = prf(*totals[name])
-        print(f"{'pdftable + ' + name:<40} {p:>10.3f} {r:>10.3f} {f:>10.3f}")
+        print(f"{'pdfgrab + ' + name:<40} {p:>10.3f} {r:>10.3f} {f:>10.3f}")
     print(f"\ndocuments scored: {scored_docs} (single-region pages only)")
-    print("This is the ceiling a perfect layout model could hand pdftable.")
+    print("This is the ceiling a perfect layout model could hand pdfgrab.")
     return 0
 
 

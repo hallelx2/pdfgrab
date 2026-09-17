@@ -5,7 +5,7 @@ Accuracy benchmarks against public datasets with published ground truth.
 These are **not** `go test` benchmarks (those live next to the code as
 `*_bench_test.go` and measure speed). These measure **correctness** against
 an external reference, and they are deliberately outside the library's Go
-module so their dependencies never reach a consumer of `pdftable`.
+module so their dependencies never reach a consumer of `pdfgrab`.
 
 Datasets are **not committed** — they are large and separately licensed.
 Each harness downloads what it needs into a scratch directory.

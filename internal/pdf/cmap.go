@@ -225,14 +225,14 @@ type cmapTokKind int
 const (
 	tokInvalid cmapTokKind = iota
 	tokNumber
-	tokHex            // <DEADBEEF>
-	tokLiteralString  // (foo)
-	tokName           // /Name
-	tokKeyword        // bfchar, endbfchar, def, …
-	tokArrayBegin     // [
-	tokArrayEnd       // ]
-	tokDictBegin      // <<
-	tokDictEnd        // >>
+	tokHex           // <DEADBEEF>
+	tokLiteralString // (foo)
+	tokName          // /Name
+	tokKeyword       // bfchar, endbfchar, def, …
+	tokArrayBegin    // [
+	tokArrayEnd      // ]
+	tokDictBegin     // <<
+	tokDictEnd       // >>
 )
 
 type cmapTok struct {

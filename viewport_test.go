@@ -1,13 +1,13 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable_test
+package pdfgrab_test
 
 import (
 	"math"
 	"testing"
 
-	"github.com/hallelx2/pdftable"
+	"github.com/hallelx2/pdfgrab"
 )
 
 func closeTo(t *testing.T, label string, got, want float64) {
@@ -27,7 +27,7 @@ func TestViewportFlipsYAxis(t *testing.T) {
 
 	// A box sitting at the very TOP of the page (high Y in PDF space)
 	// must come back with a near-ZERO Top in viewer space.
-	top := pdftable.BBox{X0: 100, Y0: 782, X1: 200, Y1: 792}
+	top := pdfgrab.BBox{X0: 100, Y0: 782, X1: 200, Y1: 792}
 	r := top.Viewport(pageH, 1)
 	closeTo(t, "top box Top", r.Top, 0)
 	closeTo(t, "top box Left", r.Left, 100)
@@ -35,7 +35,7 @@ func TestViewportFlipsYAxis(t *testing.T) {
 	closeTo(t, "top box Height", r.Height, 10)
 
 	// A box at the BOTTOM (low Y) must land at the far side.
-	bottom := pdftable.BBox{X0: 0, Y0: 0, X1: 10, Y1: 10}
+	bottom := pdfgrab.BBox{X0: 0, Y0: 0, X1: 10, Y1: 10}
 	rb := bottom.Viewport(pageH, 1)
 	closeTo(t, "bottom box Top", rb.Top, 782)
 
@@ -48,7 +48,7 @@ func TestViewportFlipsYAxis(t *testing.T) {
 // other half of what a frontend needs.
 func TestViewportScale(t *testing.T) {
 	const pageH = 792.0
-	b := pdftable.BBox{X0: 56.7, Y0: 559.7, X1: 537.9, Y1: 568.4}
+	b := pdfgrab.BBox{X0: 56.7, Y0: 559.7, X1: 537.9, Y1: 568.4}
 
 	// 150 DPI raster: 150/72 pixels per point. These are the real
 	// coordinates of the "Less: Accumulated depreciation" row on 3M's
@@ -69,7 +69,7 @@ func TestViewportScale(t *testing.T) {
 // which is what a resizable viewer should store.
 func TestNormalizedIsResolutionIndependent(t *testing.T) {
 	const pageW, pageH = 612.0, 792.0
-	b := pdftable.BBox{X0: 306, Y0: 396, X1: 612, Y1: 792} // exact top-right quadrant
+	b := pdfgrab.BBox{X0: 306, Y0: 396, X1: 612, Y1: 792} // exact top-right quadrant
 
 	n := b.Normalized(pageW, pageH)
 	closeTo(t, "Left", n.Left, 0.5)
@@ -87,7 +87,7 @@ func TestNormalizedIsResolutionIndependent(t *testing.T) {
 	}
 
 	// Degenerate pages must not emit NaN into a JSON payload.
-	if got := b.Normalized(0, 0); got != (pdftable.ViewRect{}) {
+	if got := b.Normalized(0, 0); got != (pdfgrab.ViewRect{}) {
 		t.Errorf("Normalized on a zero-sized page = %+v, want zero ViewRect", got)
 	}
 }
@@ -96,7 +96,7 @@ func TestNormalizedIsResolutionIndependent(t *testing.T) {
 // bbox from a real extraction and confirm the viewer rectangle lands
 // inside the page, right way up.
 func TestViewportOnRealCitation(t *testing.T) {
-	doc, err := pdftable.OpenFile("testdata/golden/simple1.pdf")
+	doc, err := pdfgrab.OpenFile("testdata/golden/simple1.pdf")
 	if err != nil {
 		t.Skipf("fixture unavailable: %v", err)
 	}
@@ -105,13 +105,13 @@ func TestViewportOnRealCitation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Page: %v", err)
 	}
-	words, err := p.Words(pdftable.DefaultWordOpts())
+	words, err := p.Words(pdfgrab.DefaultWordOpts())
 	if err != nil || len(words) == 0 {
 		t.Fatalf("Words: %v (n=%d)", err, len(words))
 	}
 	pw, ph := p.Width(), p.Height()
 	for _, w := range words {
-		b := pdftable.BBox{X0: w.X0, Y0: w.Y0, X1: w.X1, Y1: w.Y1}
+		b := pdfgrab.BBox{X0: w.X0, Y0: w.Y0, X1: w.X1, Y1: w.Y1}
 		r := b.Viewport(ph, 1)
 		if r.Top < 0 || r.Top > ph {
 			t.Errorf("word %q: Top=%v outside page height %v", w.Text, r.Top, ph)

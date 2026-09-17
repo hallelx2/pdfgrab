@@ -140,8 +140,8 @@ func TestAdobeGlyphRecognisers(t *testing.T) {
 func TestFontDecodeUnicodeFallback(t *testing.T) {
 	enc := EncodingByName("WinAnsiEncoding")
 	f := &Font{
-		BaseFont:           "TestFont",
-		IsSimple:           true,
+		BaseFont:            "TestFont",
+		IsSimple:            true,
 		cid2unicodeEncoding: enc,
 	}
 	// Encoding hit.

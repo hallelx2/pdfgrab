@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-// Package pdf is the internal content-stream interpreter for pdftable.
+// Package pdf is the internal content-stream interpreter for pdfgrab.
 //
 // It is intentionally NOT a public package: the data model here is the
 // raw output of walking a PDF content stream (glyph events, path

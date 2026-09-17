@@ -231,14 +231,23 @@ func TestRun_UnknownSubcommand(t *testing.T) {
 	}
 }
 
-// TestRun_Version asserts the `version` subcommand emits something
-// that mentions v0.3.0.
+// TestRun_Version asserts the `version` subcommand names the tool and
+// reports whatever version was injected at build time.
+//
+// It deliberately does NOT assert a version literal. The previous form
+// pinned "v0.3.0", so the CLI kept reporting v0.3.0 through the entire
+// v0.4.0 release and the test agreed with it. A test that has to be
+// hand-edited every release will drift the moment someone forgets.
 func TestRun_Version(t *testing.T) {
 	var stdout, stderr bytes.Buffer
 	if err := run([]string{"version"}, &stdout, &stderr); err != nil {
 		t.Fatalf("run version: %v", err)
 	}
-	if !strings.Contains(stdout.String(), "v0.3.0") {
-		t.Errorf("output missing version: %q", stdout.String())
+	got := strings.TrimSpace(stdout.String())
+	if !strings.HasPrefix(got, "pdfgrab ") {
+		t.Errorf("version output does not name the tool: %q", got)
+	}
+	if strings.TrimPrefix(got, "pdfgrab ") == "" {
+		t.Errorf("version output carries no version: %q", got)
 	}
 }

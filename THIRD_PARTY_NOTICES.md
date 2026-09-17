@@ -1,6 +1,6 @@
 # Third-party notices
 
-pdftable itself is MIT-licensed (see `LICENSE`). It bundles no third-party
+pdfgrab itself is MIT-licensed (see `LICENSE`). It bundles no third-party
 *code*, but several generated data tables in `internal/pdf/` are derived from
 third-party sources. Those sources and their license terms are reproduced
 below.

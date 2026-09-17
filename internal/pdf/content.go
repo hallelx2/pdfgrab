@@ -46,7 +46,7 @@ type Interpreter struct {
 	XObjects map[string]XObject
 
 	// Sink receives emitted events. The caller installs whatever
-	// implementation it likes — pdftable's Page uses a struct that
+	// implementation it likes — pdfgrab's Page uses a struct that
 	// accumulates Chars and paints into separate slices.
 	Sink Sink
 
@@ -62,7 +62,7 @@ type Interpreter struct {
 }
 
 // Sink receives high-level events from the content interpreter. It is
-// implemented by the page-builder in the parent package; per pdftable's
+// implemented by the page-builder in the parent package; per pdfgrab's
 // package boundary, this is the contract between the parser and the
 // public-API layer.
 type Sink interface {
@@ -81,12 +81,12 @@ type Sink interface {
 
 // CharEvent is the per-glyph data emitted by EmitChar.
 type CharEvent struct {
-	Text             string
-	X0, Y0, X1, Y1   float64
-	FontName         string
-	FontSize         float64
-	Upright          bool
-	Advance          float64
+	Text           string
+	X0, Y0, X1, Y1 float64
+	FontName       string
+	FontSize       float64
+	Upright        bool
+	Advance        float64
 }
 
 // PathEvent is the data emitted by EmitPath when a path-painting op
@@ -145,11 +145,11 @@ type XObject struct {
 // every operator just pops N typed values — and Operand keeps the
 // handler signatures tidy.
 type Operand struct {
-	Kind     OperandKind
-	Number   float64
-	Name     string  // for name and keyword operands
-	String   []byte  // for literal/hex strings
-	Array    []Operand // for [ ... ] arrays (TJ uses this)
+	Kind   OperandKind
+	Number float64
+	Name   string    // for name and keyword operands
+	String []byte    // for literal/hex strings
+	Array  []Operand // for [ ... ] arrays (TJ uses this)
 }
 
 type OperandKind int
@@ -332,8 +332,11 @@ func opRectangle(it *Interpreter, args []Operand) error {
 
 // --- Path painting ----
 
-func opStroke(it *Interpreter, _ []Operand) error      { return it.paintPath(true, false, false) }
-func opCloseStroke(it *Interpreter, _ []Operand) error { _ = opClosePath(it, nil); return it.paintPath(true, false, false) }
+func opStroke(it *Interpreter, _ []Operand) error { return it.paintPath(true, false, false) }
+func opCloseStroke(it *Interpreter, _ []Operand) error {
+	_ = opClosePath(it, nil)
+	return it.paintPath(true, false, false)
+}
 func opFill(it *Interpreter, _ []Operand) error        { return it.paintPath(false, true, false) }
 func opFillEvenOdd(it *Interpreter, _ []Operand) error { return it.paintPath(false, true, true) }
 func opFillStroke(it *Interpreter, _ []Operand) error  { return it.paintPath(true, true, false) }

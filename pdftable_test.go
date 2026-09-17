@@ -1,15 +1,15 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable_test
+package pdfgrab_test
 
 import (
 	"bytes"
 	"errors"
 	"testing"
 
-	"github.com/hallelx2/pdftable"
-	"github.com/hallelx2/pdftable/testdata"
+	"github.com/hallelx2/pdfgrab"
+	"github.com/hallelx2/pdfgrab/testdata"
 )
 
 // TestOpenAndCount checks the Open* surface plus NumPages on the
@@ -17,7 +17,7 @@ import (
 // memory by testdata.Hello() to keep the repo binary-free.
 func TestOpenAndCount(t *testing.T) {
 	data := testdata.Hello()
-	doc, err := pdftable.OpenBytes(data)
+	doc, err := pdfgrab.OpenBytes(data)
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
@@ -41,7 +41,7 @@ func TestOpenAndCount(t *testing.T) {
 // *bytes.Reader so the result must match OpenBytes exactly.
 func TestOpenReader(t *testing.T) {
 	data := testdata.Hello()
-	doc, err := pdftable.Open(bytes.NewReader(data))
+	doc, err := pdfgrab.Open(bytes.NewReader(data))
 	if err != nil {
 		t.Fatalf("Open: %v", err)
 	}
@@ -53,7 +53,7 @@ func TestOpenReader(t *testing.T) {
 
 // TestPagesIterator exercises the iter.Seq2 range iterator.
 func TestPagesIterator(t *testing.T) {
-	doc, err := pdftable.OpenBytes(testdata.Hello())
+	doc, err := pdfgrab.OpenBytes(testdata.Hello())
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
@@ -78,7 +78,7 @@ func TestPagesIterator(t *testing.T) {
 // TestPageOutOfRange checks that the sentinel is returned correctly
 // for both too-low and too-high page indices.
 func TestPageOutOfRange(t *testing.T) {
-	doc, err := pdftable.OpenBytes(testdata.Hello())
+	doc, err := pdfgrab.OpenBytes(testdata.Hello())
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
@@ -87,7 +87,7 @@ func TestPageOutOfRange(t *testing.T) {
 	cases := []int{0, -1, 2, 100}
 	for _, n := range cases {
 		_, err := doc.Page(n)
-		if !errors.Is(err, pdftable.ErrPageOutOfRange) {
+		if !errors.Is(err, pdfgrab.ErrPageOutOfRange) {
 			t.Errorf("Page(%d) err = %v, want ErrPageOutOfRange", n, err)
 		}
 	}
@@ -104,8 +104,8 @@ func TestInvalidPDF(t *testing.T) {
 		[]byte("plain text"),
 	}
 	for _, c := range cases {
-		_, err := pdftable.OpenBytes(c)
-		if !errors.Is(err, pdftable.ErrInvalidPDF) {
+		_, err := pdfgrab.OpenBytes(c)
+		if !errors.Is(err, pdfgrab.ErrInvalidPDF) {
 			t.Errorf("OpenBytes(%q): err = %v, want ErrInvalidPDF", c, err)
 		}
 	}

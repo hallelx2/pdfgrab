@@ -1,4 +1,4 @@
-"""Generate font-coverage fixture PDFs for pdftable's tests.
+"""Generate font-coverage fixture PDFs for pdfgrab's tests.
 
     python scripts/gen_font_fixtures.py
     python scripts/gen_golden.py          # regenerate pdfplumber goldens

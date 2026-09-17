@@ -28,7 +28,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/hallelx2/pdftable/testdata"
+	"github.com/hallelx2/pdfgrab/testdata"
 )
 
 func main() {

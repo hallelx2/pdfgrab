@@ -1,13 +1,13 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-// cmd/pdftable is the command-line interface to the pdftable library.
-// It mirrors pdfplumber's CLI surface for the operations pdftable
+// cmd/pdfgrab is the command-line interface to the pdfgrab library.
+// It mirrors pdfplumber's CLI surface for the operations pdfgrab
 // implements: extract text, extract tables, dump page geometry.
 //
 // Usage:
 //
-//	pdftable extract <file.pdf> [flags]
+//	pdfgrab extract <file.pdf> [flags]
 //
 // Flags (extract subcommand):
 //
@@ -28,7 +28,7 @@
 //	--explicit-horizontal-lines  Comma-separated floats; required when horizontal-strategy=explicit.
 //	--indent                 Int; JSON pretty-printing indent. 0 = compact.
 //
-// The CLI uses the standard library `flag` package and the `pdftable`
+// The CLI uses the standard library `flag` package and the `pdfgrab`
 // public API only — no third-party dependencies.
 package main
 
@@ -41,8 +41,17 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/hallelx2/pdftable"
+	"github.com/hallelx2/pdfgrab"
 )
+
+// version is the CLI's reported version. The release workflow injects
+// the tag via -ldflags "-X main.version=$GITHUB_REF_NAME"; a plain
+// `go build` leaves it as "dev".
+//
+// It is deliberately NOT a hardcoded literal. It was one until v0.5.0,
+// and it silently reported v0.3.0 for the whole of v0.4.0 because
+// nothing tied the string to the tag.
+var version = "dev"
 
 func main() {
 	if err := run(os.Args[1:], os.Stdout, os.Stderr); err != nil {
@@ -66,7 +75,7 @@ func run(args []string, stdout, stderr io.Writer) error {
 		printUsage(stdout)
 		return nil
 	case "version", "-v", "--version":
-		fmt.Fprintln(stdout, "pdftable v0.3.0")
+		fmt.Fprintln(stdout, "pdfgrab "+version)
 		return nil
 	default:
 		printUsage(stderr)
@@ -76,14 +85,14 @@ func run(args []string, stdout, stderr io.Writer) error {
 
 // printUsage prints the top-level usage string.
 func printUsage(w io.Writer) {
-	fmt.Fprintln(w, `pdftable — extract text and tables from PDFs
+	fmt.Fprintln(w, `pdfgrab — extract text and tables from PDFs
 
 USAGE:
-  pdftable extract <file.pdf> [flags]
-  pdftable version
-  pdftable help
+  pdfgrab extract <file.pdf> [flags]
+  pdfgrab version
+  pdfgrab help
 
-EXTRACT FLAGS (run 'pdftable extract --help' for full list):
+EXTRACT FLAGS (run 'pdfgrab extract --help' for full list):
   --pages 1,3-5            Pages to process (default: all).
   --tables                 Output detected tables.
   --text                   Output extracted text (mutually exclusive with --tables).
@@ -91,28 +100,28 @@ EXTRACT FLAGS (run 'pdftable extract --help' for full list):
   --vertical-strategy S    "lines" | "lines_strict" | "text" | "explicit".
   --horizontal-strategy S  Same set, default "lines".
 
-Documentation: https://github.com/hallelx2/pdftable`)
+Documentation: https://github.com/hallelx2/pdfgrab`)
 }
 
 // extractFlags is the parsed flag set for the extract subcommand.
 type extractFlags struct {
-	pages                    string
-	tables                   bool
-	text                     bool
-	format                   string
-	verticalStrategy         string
-	horizontalStrategy       string
-	snapTolerance            float64
-	joinTolerance            float64
-	edgeMinLength            float64
-	edgeMinLengthPrefilter   float64
-	intersectionTolerance    float64
-	textTolerance            float64
-	minWordsVertical         int
-	minWordsHorizontal       int
-	explicitVerticalLines    string
-	explicitHorizontalLines  string
-	indent                   int
+	pages                   string
+	tables                  bool
+	text                    bool
+	format                  string
+	verticalStrategy        string
+	horizontalStrategy      string
+	snapTolerance           float64
+	joinTolerance           float64
+	edgeMinLength           float64
+	edgeMinLengthPrefilter  float64
+	intersectionTolerance   float64
+	textTolerance           float64
+	minWordsVertical        int
+	minWordsHorizontal      int
+	explicitVerticalLines   string
+	explicitHorizontalLines string
+	indent                  int
 }
 
 // runExtract parses extract-subcommand args, opens the PDF, and
@@ -163,14 +172,14 @@ func runExtract(args []string, stdout, stderr io.Writer) error {
 	}
 	if !f.tables && !f.text {
 		// Default to --tables when neither is specified. Mirrors the
-		// pdftable library's primary use case.
+		// pdfgrab library's primary use case.
 		f.tables = true
 	}
 	if f.format != "json" && f.format != "text" {
 		return fmt.Errorf("--format must be json or text, got %q", f.format)
 	}
 
-	doc, err := pdftable.OpenFile(path)
+	doc, err := pdfgrab.OpenFile(path)
 	if err != nil {
 		return err
 	}
@@ -256,10 +265,10 @@ func parsePages(spec string, total int) ([]int, error) {
 
 // buildSettings translates the parsed flag set into a TableSettings.
 // It also parses the explicit-line coordinate strings.
-func buildSettings(f extractFlags) (pdftable.TableSettings, error) {
-	s := pdftable.DefaultTableSettings()
-	s.VerticalStrategy = pdftable.TableStrategy(f.verticalStrategy)
-	s.HorizontalStrategy = pdftable.TableStrategy(f.horizontalStrategy)
+func buildSettings(f extractFlags) (pdfgrab.TableSettings, error) {
+	s := pdfgrab.DefaultTableSettings()
+	s.VerticalStrategy = pdfgrab.TableStrategy(f.verticalStrategy)
+	s.HorizontalStrategy = pdfgrab.TableStrategy(f.horizontalStrategy)
 	s.SnapTolerance = f.snapTolerance
 	s.JoinTolerance = f.joinTolerance
 	s.EdgeMinLength = f.edgeMinLength
@@ -289,7 +298,7 @@ func buildSettings(f extractFlags) (pdftable.TableSettings, error) {
 // reorderFlagsLast moves positional arguments to the end of the slice
 // so the standard library flag package's "stop at first non-flag"
 // behaviour doesn't get in the way of pdfplumber-style invocations
-// like `pdftable extract file.pdf --tables`.
+// like `pdfgrab extract file.pdf --tables`.
 //
 // Heuristic: a token is a flag if it starts with "-" or "--". Flags
 // of the form "--foo=val" carry their value inline. Flags whose
@@ -359,7 +368,7 @@ func parseFloatList(spec string) ([]float64, error) {
 	return out, nil
 }
 
-// tablesOutput is the JSON shape emitted by `pdftable extract
+// tablesOutput is the JSON shape emitted by `pdfgrab extract
 // --tables`. We deliberately mirror pdfplumber's `to_json` schema
 // where it overlaps: one entry per page, each carrying the page
 // dimensions and a list of tables. Each table carries the row grid,
@@ -369,21 +378,21 @@ type tablesOutput struct {
 }
 
 type pageTablesOutput struct {
-	Number int            `json:"number"`
-	Width  float64        `json:"width"`
-	Height float64        `json:"height"`
-	Tables []tableOutput  `json:"tables"`
+	Number int           `json:"number"`
+	Width  float64       `json:"width"`
+	Height float64       `json:"height"`
+	Tables []tableOutput `json:"tables"`
 }
 
 type tableOutput struct {
-	BBox     [4]float64    `json:"bbox"`
-	Rows     [][]string    `json:"rows"`
-	Cells    [][][4]float64 `json:"cells"`
+	BBox  [4]float64     `json:"bbox"`
+	Rows  [][]string     `json:"rows"`
+	Cells [][][4]float64 `json:"cells"`
 }
 
 // emitTables runs ExtractTables on each requested page and writes the
 // aggregated result in the requested format.
-func emitTables(doc pdftable.Document, pages []int, settings pdftable.TableSettings, f extractFlags, w io.Writer) error {
+func emitTables(doc pdfgrab.Document, pages []int, settings pdfgrab.TableSettings, f extractFlags, w io.Writer) error {
 	out := tablesOutput{Pages: make([]pageTablesOutput, 0, len(pages))}
 	for _, n := range pages {
 		page, err := doc.Page(n)
@@ -441,7 +450,7 @@ func emitTables(doc pdftable.Document, pages []int, settings pdftable.TableSetti
 	return enc.Encode(out)
 }
 
-// textOutput is the JSON shape for `pdftable extract --text`. One
+// textOutput is the JSON shape for `pdfgrab extract --text`. One
 // entry per page; text is the dense extract-text output.
 type textOutput struct {
 	Pages []pageTextOutput `json:"pages"`
@@ -458,14 +467,14 @@ type pageTextOutput struct {
 // aggregated result in the requested format. --format text emits the
 // text verbatim with a form-feed (\f) between pages, mirroring
 // `pdftotext` and pdfplumber's --format text behaviour.
-func emitText(doc pdftable.Document, pages []int, f extractFlags, w io.Writer) error {
+func emitText(doc pdfgrab.Document, pages []int, f extractFlags, w io.Writer) error {
 	out := textOutput{Pages: make([]pageTextOutput, 0, len(pages))}
 	for _, n := range pages {
 		page, err := doc.Page(n)
 		if err != nil {
 			return err
 		}
-		text, err := page.ExtractText(pdftable.DefaultTextOpts())
+		text, err := page.ExtractText(pdfgrab.DefaultTextOpts())
 		if err != nil {
 			return fmt.Errorf("page %d: %w", n, err)
 		}

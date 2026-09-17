@@ -1,12 +1,12 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable
+package pdfgrab
 
 import (
 	"testing"
 
-	"github.com/hallelx2/pdftable/internal/layout"
+	"github.com/hallelx2/pdfgrab/internal/layout"
 )
 
 func vEdge(x, y0, y1 float64) layout.Edge {

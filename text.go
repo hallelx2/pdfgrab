@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable
+package pdfgrab
 
 import (
 	"math"
@@ -174,7 +174,7 @@ type WordOpts struct {
 // DefaultWordOpts returns a WordOpts populated with pdfplumber-matching
 // defaults. Use this and override the fields you care about:
 //
-//	opts := pdftable.DefaultWordOpts()
+//	opts := pdfgrab.DefaultWordOpts()
 //	opts.XTolerance = 1.5
 //	words, _ := page.Words(opts)
 func DefaultWordOpts() WordOpts {

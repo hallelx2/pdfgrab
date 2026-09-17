@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-// Package pdftable is a Go-native port of Python's pdfplumber. It
+// Package pdfgrab is a Go-native port of Python's pdfplumber. It
 // reads a PDF document, walks the content streams, and surfaces the
 // positioned primitives (characters, lines, rectangles, curves) that
 // higher-level layout algorithms — text extraction, word grouping,
@@ -10,18 +10,18 @@
 // The library is structured in layers that mirror the pdfplumber +
 // pdfminer.six split:
 //
-//   - This package (pdftable) is the public API. It is small, stable,
+//   - This package (pdfgrab) is the public API. It is small, stable,
 //     and contains no PDF parsing logic of its own — it just exposes
 //     Document, Page, Char, Line, Rect, Curve and constructs them
 //     from the internal package.
-//   - github.com/hallelx2/pdftable/internal/pdf is the content-stream
+//   - github.com/hallelx2/pdfgrab/internal/pdf is the content-stream
 //     interpreter. It is intentionally not public: the data shapes
 //     there will evolve as we add more PDF features, and we don't
 //     want callers depending on them.
 //
 // Typical usage:
 //
-//	doc, err := pdftable.OpenFile("report.pdf")
+//	doc, err := pdfgrab.OpenFile("report.pdf")
 //	if err != nil { return err }
 //	defer doc.Close()
 //
@@ -36,7 +36,7 @@
 // the README for the roadmap. The Page interface is additive across
 // releases; v0.0.1 callers using only Chars/Lines/Rects/Curves
 // continue to compile against v0.1.0 without changes.
-package pdftable
+package pdfgrab
 
 import (
 	"bytes"
@@ -45,7 +45,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/hallelx2/pdftable/internal/pdf"
+	"github.com/hallelx2/pdfgrab/internal/pdf"
 )
 
 // Open reads an entire io.Reader into memory and parses it as a PDF.
@@ -96,7 +96,7 @@ func OpenBytes(b []byte) (Document, error) {
 func OpenFile(path string) (Document, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("pdftable: open %s: %w", path, err)
+		return nil, fmt.Errorf("pdfgrab: open %s: %w", path, err)
 	}
 	return OpenBytes(data)
 }
@@ -156,7 +156,7 @@ var (
 	_ Page     = (*page)(nil)
 )
 
-// errIs is a tiny re-export so callers that vendor pdftable into a
+// errIs is a tiny re-export so callers that vendor pdfgrab into a
 // monorepo don't have to also import "errors" for the common case of
 // matching one of our sentinels.
 func errIs(err, target error) bool { return errors.Is(err, target) }

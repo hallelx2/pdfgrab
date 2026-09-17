@@ -11,7 +11,7 @@ python bench/icdar2013/run.py --limit 5  # quick check while iterating
 python bench/icdar2013/run.py --diag     # detection vs structure breakdown
 ```
 
-The dataset (~12 MB) downloads to `~/.cache/pdftable-bench` (override with
+The dataset (~12 MB) downloads to `~/.cache/pdfgrab-bench` (override with
 `PDFTABLE_BENCH_DIR`). It is not committed.
 
 ## Metric: adjacency relations
@@ -52,6 +52,6 @@ Latest results: [`docs/evaluations/`](../../docs/evaluations/).
 | | |
 | --- | --- |
 | `run.py` | fetches the dataset, builds the extractor, runs everything |
-| `extract.go` | dumps every table pdftable finds as JSON; built as its own module so the benchmark adds no dependency to the library |
+| `extract.go` | dumps every table pdfgrab finds as JSON; built as its own module so the benchmark adds no dependency to the library |
 | `score.py` | parses ground-truth XML, computes precision/recall/F1 |
 | `diag.py` | separates detection failures from structure failures |

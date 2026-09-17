@@ -10,10 +10,10 @@
 
 | system | precision | recall | F1 |
 | --- | --- | --- | --- |
-| pdftable (`lines`) | 0.865 | 0.229 | **0.362** |
+| pdfgrab (`lines`) | 0.865 | 0.229 | **0.362** |
 | pdfplumber (`lines`) | 0.868 | 0.235 | **0.370** |
-| pdftable (fallback `lines`→`text`) | 0.223 | 0.557 | 0.318 |
-| pdftable (fallback + `MergeSplitTokens`) | 0.471 | 0.275 | 0.347 |
+| pdfgrab (fallback `lines`→`text`) | 0.223 | 0.557 | 0.318 |
+| pdfgrab (fallback + `MergeSplitTokens`) | 0.471 | 0.275 | 0.347 |
 | pdfplumber (`text`) | 0.167 | 0.679 | 0.267 |
 
 ## Two findings
@@ -22,7 +22,7 @@
 
 0.362 vs 0.370, with near-identical precision (0.865 vs 0.868). Everything
 before this validated *text* fidelity — word positions, glyph widths,
-signs. This is the first measurement of *table* behaviour, and pdftable
+signs. This is the first measurement of *table* behaviour, and pdfgrab
 tracks its reference implementation there too.
 
 ### 2. The bottleneck is detection, not structure
@@ -75,7 +75,7 @@ replacing either:
 
 - **layout/VLM model → table region and row/column structure** (attacks
   the 0.229 recall)
-- **pdftable text layer → cell contents and coordinates** (keeps exact
+- **pdfgrab text layer → cell contents and coordinates** (keeps exact
   values and citation geometry, which a generative model cannot provide)
 
 Two cheaper wins should be tried first, since that is where the points

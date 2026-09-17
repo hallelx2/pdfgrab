@@ -117,9 +117,9 @@ func TestHexBytesToUTF16BE(t *testing.T) {
 		in   []byte
 		want string
 	}{
-		{[]byte{0x00, 0x41}, "A"},                         // BMP
-		{[]byte{0x00, 0x66, 0x00, 0x69}, "fi"},            // two BMP code units
-		{[]byte{0xD8, 0x3D, 0xDE, 0x00}, "\U0001F600"},    // surrogate pair → 😀
+		{[]byte{0x00, 0x41}, "A"},                      // BMP
+		{[]byte{0x00, 0x66, 0x00, 0x69}, "fi"},         // two BMP code units
+		{[]byte{0xD8, 0x3D, 0xDE, 0x00}, "\U0001F600"}, // surrogate pair → 😀
 	}
 	for _, tc := range cases {
 		got := hexBytesToUTF16BE(tc.in)

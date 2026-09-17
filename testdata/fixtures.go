@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-// Package testdata builds the test PDFs used by pdftable's tests.
+// Package testdata builds the test PDFs used by pdfgrab's tests.
 //
 // We hand-craft the PDFs as byte slices rather than checking in
 // binaries because:

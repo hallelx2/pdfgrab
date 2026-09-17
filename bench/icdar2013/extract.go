@@ -1,4 +1,4 @@
-// Emit every table pdftable finds in a PDF, as JSON, for benchmarking.
+// Emit every table pdfgrab finds in a PDF, as JSON, for benchmarking.
 package main
 
 import (
@@ -8,7 +8,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/hallelx2/pdftable"
+	"github.com/hallelx2/pdfgrab"
 )
 
 type tableOut struct {
@@ -30,7 +30,7 @@ func main() {
 		`JSON of per-page explicit edges: {"1":{"v":[..],"h":[..]}}`)
 	flag.Parse()
 
-	doc, err := pdftable.OpenFile(flag.Arg(0))
+	doc, err := pdfgrab.OpenFile(flag.Arg(0))
 	if err != nil {
 		// A file we cannot open scores zero rather than aborting the run;
 		// the harness needs a result for every document.
@@ -40,37 +40,37 @@ func main() {
 	}
 	defer doc.Close()
 
-	mk := func(v, h pdftable.TableStrategy) pdftable.TableSettings {
-		s := pdftable.DefaultTableSettings()
+	mk := func(v, h pdfgrab.TableStrategy) pdfgrab.TableSettings {
+		s := pdfgrab.DefaultTableSettings()
 		s.VerticalStrategy, s.HorizontalStrategy = v, h
 		s.MergeSplitTokens = *merge
 		return s
 	}
-	lines := mk(pdftable.StrategyLines, pdftable.StrategyLines)
-	text := mk(pdftable.StrategyText, pdftable.StrategyText)
+	lines := mk(pdfgrab.StrategyLines, pdfgrab.StrategyLines)
+	text := mk(pdfgrab.StrategyText, pdfgrab.StrategyText)
 	// "mixed" is the booktabs case: horizontal rules give the rows, word
 	// alignment gives the columns.
-	mixed := mk(pdftable.StrategyText, pdftable.StrategyLines)
-	auto := mk(pdftable.StrategyAuto, pdftable.StrategyAuto)
+	mixed := mk(pdfgrab.StrategyText, pdfgrab.StrategyLines)
+	auto := mk(pdfgrab.StrategyAuto, pdfgrab.StrategyAuto)
 
-	var attempts []pdftable.TableSettings
+	var attempts []pdfgrab.TableSettings
 	switch *strategy {
 	case "text":
-		attempts = []pdftable.TableSettings{text}
+		attempts = []pdfgrab.TableSettings{text}
 	case "mixed":
-		attempts = []pdftable.TableSettings{mixed}
+		attempts = []pdfgrab.TableSettings{mixed}
 	case "auto":
-		attempts = []pdftable.TableSettings{auto}
+		attempts = []pdfgrab.TableSettings{auto}
 	case "lines-then-mixed":
-		attempts = []pdftable.TableSettings{lines, mixed}
+		attempts = []pdfgrab.TableSettings{lines, mixed}
 	case "fallback":
-		attempts = []pdftable.TableSettings{lines, text}
+		attempts = []pdfgrab.TableSettings{lines, text}
 	default:
-		attempts = []pdftable.TableSettings{lines}
+		attempts = []pdfgrab.TableSettings{lines}
 	}
 
 	// Oracle mode: the caller supplies the row/column boundaries and
-	// pdftable only fills the cells. This is exactly the shape of the
+	// pdfgrab only fills the cells. This is exactly the shape of the
 	// hybrid a layout model would drive — and fed GROUND-TRUTH edges it
 	// measures the ceiling that hybrid can reach: how good extraction gets
 	// if detection and gridding were solved perfectly.
@@ -93,7 +93,7 @@ func main() {
 			if !ok || len(e.V) < 2 || len(e.H) < 2 {
 				continue
 			}
-			s := mk(pdftable.StrategyExplicit, pdftable.StrategyExplicit)
+			s := mk(pdfgrab.StrategyExplicit, pdfgrab.StrategyExplicit)
 			s.ExplicitVerticalLines = e.V
 			s.ExplicitHorizontalLines = e.H
 			if tables, err := p.ExtractTables(s); err == nil {

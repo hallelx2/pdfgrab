@@ -101,7 +101,7 @@ def prf(correct: int, ndet: int, ngt: int) -> tuple[float, float, float]:
     return p, r, f
 
 
-def run_pdftable(exe: str, pdf: str, strategy: str, merge: bool) -> Counter:
+def run_pdfgrab(exe: str, pdf: str, strategy: str, merge: bool) -> Counter:
     cmd = [exe, "-strategy", strategy]
     if merge:
         cmd.append("-merge")
@@ -153,9 +153,9 @@ def main() -> int:
     print(f"scoring {len(pairs)} documents\n", flush=True)
 
     systems = {
-        "pdftable (lines)": lambda p: run_pdftable(exe, p, "lines", False),
-        "pdftable (AUTO)": lambda p: run_pdftable(exe, p, "auto", False),
-        "pdftable (AUTO +merge)": lambda p: run_pdftable(exe, p, "auto", True),
+        "pdfgrab (lines)": lambda p: run_pdfgrab(exe, p, "lines", False),
+        "pdfgrab (AUTO)": lambda p: run_pdfgrab(exe, p, "auto", False),
+        "pdfgrab (AUTO +merge)": lambda p: run_pdfgrab(exe, p, "auto", True),
         "pdfplumber (lines)": lambda p: run_pdfplumber(p, "lines"),
     }
     totals = {k: [0, 0, 0] for k in systems}
@@ -175,7 +175,7 @@ def main() -> int:
     for name in systems:
         p, r, f = prf(*totals[name])
         print(f"{name:<28} {p:>10.3f} {r:>10.3f} {f:>10.3f}")
-    print(f"\nground-truth relations: {totals['pdftable (lines)'][2]}")
+    print(f"\nground-truth relations: {totals['pdfgrab (lines)'][2]}")
     return 0
 
 

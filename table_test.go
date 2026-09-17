@@ -1,10 +1,10 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable
+package pdfgrab
 
-// table_test.go is intentionally in the pdftable package (not
-// pdftable_test) so it can reach the unexported algorithm functions:
+// table_test.go is intentionally in the pdfgrab package (not
+// pdfgrab_test) so it can reach the unexported algorithm functions:
 // edgesToIntersections, intersectionsToCells, cellsToTables,
 // assembleTableBox, runTableFinder. The public-API integration test
 // (TestExtractTables_RuledFixture) lives at the end and uses the
@@ -14,8 +14,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hallelx2/pdftable/internal/layout"
-	"github.com/hallelx2/pdftable/testdata"
+	"github.com/hallelx2/pdfgrab/internal/layout"
+	"github.com/hallelx2/pdfgrab/testdata"
 )
 
 // makeH builds a horizontal edge at Y = y from X0 = x0 to X1 = x1.
@@ -340,7 +340,7 @@ func TestApplyDefaults_FillsZeroFields(t *testing.T) {
 // This test uses the public API only — the unit tests above cover
 // the unexported algorithm functions.
 func TestExtractTables_RuledFixture(t *testing.T) {
-	// Import path is package-internal here (we're in the pdftable
+	// Import path is package-internal here (we're in the pdfgrab
 	// package, not _test), so OpenBytes is unqualified.
 	doc, err := OpenBytes(testdata.TableRuled())
 	if err != nil {
@@ -469,7 +469,7 @@ func TestExtractTables_NegativeCapDisables(t *testing.T) {
 }
 
 // TestApplyDefaults_FillsSafetyCaps asserts the new safety-cap fields
-// get their pdftable defaults when left zero, matching the
+// get their pdfgrab defaults when left zero, matching the
 // zero-value-gets-defaults convention of the other TableSettings
 // fields.
 func TestApplyDefaults_FillsSafetyCaps(t *testing.T) {

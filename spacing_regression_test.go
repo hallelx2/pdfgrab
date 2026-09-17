@@ -1,4 +1,4 @@
-package pdftable
+package pdfgrab
 
 import (
 	"os"

@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable
+package pdfgrab
 
 import "math"
 
@@ -131,7 +131,7 @@ type ViewRect struct {
 // 150/72, and for PDF.js it is the viewport scale you passed to
 // getViewport({scale}).
 //
-// Every coordinate pdftable reports — Char, Word, Line, Rect, Table.BBox
+// Every coordinate pdfgrab reports — Char, Word, Line, Rect, Table.BBox
 // and Table.CellsBBox — is already normalised: the MediaBox origin has
 // been translated to (0,0) and any /Rotate applied, so the space matches
 // Page.Width() x Page.Height() exactly. That means no per-page fixups

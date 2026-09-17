@@ -38,7 +38,7 @@ func NewReader(data []byte) (*Reader, error) {
 	conf.ValidationMode = model.ValidationRelaxed
 	ctx, err := api.ReadContext(bytes.NewReader(data), conf)
 	if err != nil {
-		return nil, fmt.Errorf("pdftable: read: %w", err)
+		return nil, fmt.Errorf("pdfgrab: read: %w", err)
 	}
 	if ctx.Encrypt != nil && ctx.E != nil {
 		// pdfcpu auto-decrypts with the configured password (empty by
@@ -51,7 +51,7 @@ func NewReader(data []byte) (*Reader, error) {
 		// (we surface ErrEncrypted).
 	}
 	if err := ctx.EnsurePageCount(); err != nil {
-		return nil, fmt.Errorf("pdftable: page count: %w", err)
+		return nil, fmt.Errorf("pdfgrab: page count: %w", err)
 	}
 	return &Reader{Ctx: ctx}, nil
 }

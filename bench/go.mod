@@ -1,12 +1,12 @@
 // Separate module on purpose: the benchmark harness must never add a
 // dependency to the library it measures. Nested modules are excluded from
 // the parent's ./... , so go build ./... at the repo root ignores this
-// entirely and a consumer of pdftable never fetches it.
-module github.com/hallelx2/pdftable/bench
+// entirely and a consumer of pdfgrab never fetches it.
+module github.com/hallelx2/pdfgrab/bench
 
 go 1.25.0
 
-require github.com/hallelx2/pdftable v0.0.0
+require github.com/hallelx2/pdfgrab v0.0.0
 
 require (
 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
@@ -22,4 +22,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-replace github.com/hallelx2/pdftable => ../
+replace github.com/hallelx2/pdfgrab => ../

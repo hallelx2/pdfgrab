@@ -1,8 +1,8 @@
-# pdftable
+# pdfgrab
 
 A Go-native port of Python's [pdfplumber](https://github.com/jsvine/pdfplumber).
 
-`pdftable` reads PDF documents, walks the content streams, and surfaces
+`pdfgrab` reads PDF documents, walks the content streams, and surfaces
 the positioned primitives — characters, lines, rectangles, curves — that
 higher-level layout algorithms (text extraction, word grouping, table
 detection) operate on. It is built on top of
@@ -22,17 +22,17 @@ heuristics on. This is that.
 `v0.3.0` — full pdfplumber parity for table-finding strategies. All four
 canonical strategies are implemented: `lines`, `lines_strict`, `text`,
 and `explicit`. Mix and match per-axis (e.g. `vertical="text"` +
-`horizontal="lines"`) works as expected. Also ships the `pdftable`
+`horizontal="lines"`) works as expected. Also ships the `pdfgrab`
 CLI for extracting text and tables without writing Go.
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/hallelx2/pdftable.svg)](https://pkg.go.dev/github.com/hallelx2/pdftable)
-[![CI](https://github.com/hallelx2/pdftable/actions/workflows/test.yml/badge.svg)](https://github.com/hallelx2/pdftable/actions/workflows/test.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/hallelx2/pdfgrab.svg)](https://pkg.go.dev/github.com/hallelx2/pdfgrab)
+[![CI](https://github.com/hallelx2/pdfgrab/actions/workflows/test.yml/badge.svg)](https://github.com/hallelx2/pdfgrab/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Install
 
 ```sh
-go get github.com/hallelx2/pdftable@v0.3.0
+go get github.com/hallelx2/pdfgrab@v0.3.0
 ```
 
 Requires Go 1.25+ (uses the standard-library `iter` package for the `Pages()` range-over-func iterator, and pdfcpu v0.12+).
@@ -46,11 +46,11 @@ import (
     "fmt"
     "log"
 
-    "github.com/hallelx2/pdftable"
+    "github.com/hallelx2/pdfgrab"
 )
 
 func main() {
-    doc, err := pdftable.OpenFile("report.pdf")
+    doc, err := pdfgrab.OpenFile("report.pdf")
     if err != nil {
         log.Fatal(err)
     }
@@ -65,8 +65,8 @@ func main() {
             n, len(chars), len(rects), len(lines))
 
         // Words and text extraction (v0.1.0).
-        words, _ := page.Words(pdftable.DefaultWordOpts())
-        text, _ := page.ExtractText(pdftable.DefaultTextOpts())
+        words, _ := page.Words(pdfgrab.DefaultWordOpts())
+        text, _ := page.ExtractText(pdfgrab.DefaultTextOpts())
         fmt.Printf("  %d words; first line: %q\n",
             len(words), firstLine(text))
     }
@@ -178,22 +178,22 @@ type TextOpts struct {
 
 // Sentinel errors.
 var (
-    ErrInvalidPDF     = errors.New("pdftable: invalid PDF")
-    ErrPageOutOfRange = errors.New("pdftable: page out of range")
-    ErrUnsupported    = errors.New("pdftable: unsupported feature")
-    ErrEncrypted      = errors.New("pdftable: encrypted PDF (decryption not yet supported)")
+    ErrInvalidPDF     = errors.New("pdfgrab: invalid PDF")
+    ErrPageOutOfRange = errors.New("pdfgrab: page out of range")
+    ErrUnsupported    = errors.New("pdfgrab: unsupported feature")
+    ErrEncrypted      = errors.New("pdfgrab: encrypted PDF (decryption not yet supported)")
 )
 ```
 
 ## Text extraction
 
 ```go
-doc, _ := pdftable.OpenFile("report.pdf")
+doc, _ := pdfgrab.OpenFile("report.pdf")
 defer doc.Close()
 page, _ := doc.Page(1)
 
 // Words: each Word is a contiguous text run.
-words, _ := page.Words(pdftable.DefaultWordOpts())
+words, _ := page.Words(pdfgrab.DefaultWordOpts())
 for _, w := range words {
     fmt.Printf("%-20s @ (%.1f, %.1f) %s %.1fpt\n",
         w.Text, w.X0, w.Y0, w.FontName, w.FontSize)
@@ -201,12 +201,12 @@ for _, w := range words {
 
 // ExtractText: all text on the page as one string. Dense (no layout)
 // joins words with spaces and lines with "\n".
-text, _ := page.ExtractText(pdftable.DefaultTextOpts())
+text, _ := page.ExtractText(pdfgrab.DefaultTextOpts())
 fmt.Println(text)
 
 // Layout-preserving extraction emulates `pdftotext -layout` / pdfplumber's
 // extract_text(layout=True) — column-aligned output suitable for forms.
-opts := pdftable.DefaultTextOpts()
+opts := pdfgrab.DefaultTextOpts()
 opts.Layout = true
 laid, _ := page.ExtractText(opts)
 fmt.Println(laid)
@@ -220,12 +220,12 @@ pdfplumber's `TableFinder`) and returns one `*Table` per detected
 table, with cell text already extracted.
 
 ```go
-doc, _ := pdftable.OpenFile("invoice.pdf")
+doc, _ := pdfgrab.OpenFile("invoice.pdf")
 defer doc.Close()
 page, _ := doc.Page(1)
 
-settings := pdftable.DefaultTableSettings()
-// settings.VerticalStrategy = pdftable.StrategyLinesStrict  // ignore rect outlines
+settings := pdfgrab.DefaultTableSettings()
+// settings.VerticalStrategy = pdfgrab.StrategyLinesStrict  // ignore rect outlines
 
 tables, _ := page.ExtractTables(settings)
 for ti, t := range tables {
@@ -260,7 +260,7 @@ The four implemented strategies (one per axis, chosen independently):
   table boundaries are known from layout analysis or manual
   annotation.
 
-### Side-by-side: pdfplumber → pdftable (lines strategy)
+### Side-by-side: pdfplumber → pdfgrab (lines strategy)
 
 ```python
 # Python (pdfplumber)
@@ -275,16 +275,16 @@ with pdfplumber.open("invoice.pdf") as pdf:
 ```
 
 ```go
-// Go (pdftable)
-import "github.com/hallelx2/pdftable"
+// Go (pdfgrab)
+import "github.com/hallelx2/pdfgrab"
 
-doc, _ := pdftable.OpenFile("invoice.pdf")
+doc, _ := pdfgrab.OpenFile("invoice.pdf")
 defer doc.Close()
 page, _ := doc.Page(1)
 
-settings := pdftable.DefaultTableSettings()
-settings.VerticalStrategy = pdftable.StrategyLines
-settings.HorizontalStrategy = pdftable.StrategyLines
+settings := pdfgrab.DefaultTableSettings()
+settings.VerticalStrategy = pdfgrab.StrategyLines
+settings.HorizontalStrategy = pdfgrab.StrategyLines
 
 tables, _ := page.ExtractTables(settings)
 for _, t := range tables {
@@ -294,7 +294,7 @@ for _, t := range tables {
 }
 ```
 
-### Side-by-side: pdfplumber → pdftable (text strategy)
+### Side-by-side: pdfplumber → pdfgrab (text strategy)
 
 ```python
 # Python (pdfplumber) — borderless tables
@@ -310,14 +310,14 @@ with pdfplumber.open("10k-filing.pdf") as pdf:
 ```
 
 ```go
-// Go (pdftable)
-doc, _ := pdftable.OpenFile("10k-filing.pdf")
+// Go (pdfgrab)
+doc, _ := pdfgrab.OpenFile("10k-filing.pdf")
 defer doc.Close()
 page, _ := doc.Page(4)
 
-settings := pdftable.DefaultTableSettings()
-settings.VerticalStrategy = pdftable.StrategyText
-settings.HorizontalStrategy = pdftable.StrategyText
+settings := pdfgrab.DefaultTableSettings()
+settings.VerticalStrategy = pdfgrab.StrategyText
+settings.HorizontalStrategy = pdfgrab.StrategyText
 settings.MinWordsVertical = 3
 
 tables, _ := page.ExtractTables(settings)
@@ -328,7 +328,7 @@ for _, t := range tables {
 }
 ```
 
-### Side-by-side: pdfplumber → pdftable (explicit strategy)
+### Side-by-side: pdfplumber → pdfgrab (explicit strategy)
 
 ```python
 # Python (pdfplumber) — caller-supplied edges
@@ -347,14 +347,14 @@ with pdfplumber.open("statement.pdf") as pdf:
 ```
 
 ```go
-// Go (pdftable)
-doc, _ := pdftable.OpenFile("statement.pdf")
+// Go (pdfgrab)
+doc, _ := pdfgrab.OpenFile("statement.pdf")
 defer doc.Close()
 page, _ := doc.Page(1)
 
-settings := pdftable.DefaultTableSettings()
-settings.VerticalStrategy = pdftable.StrategyExplicit
-settings.HorizontalStrategy = pdftable.StrategyExplicit
+settings := pdfgrab.DefaultTableSettings()
+settings.VerticalStrategy = pdfgrab.StrategyExplicit
+settings.HorizontalStrategy = pdfgrab.StrategyExplicit
 settings.ExplicitVerticalLines   = []float64{100, 200, 300, 400}
 settings.ExplicitHorizontalLines = []float64{600, 650, 700, 720}
 
@@ -371,16 +371,16 @@ Each axis picks its strategy independently. Combinations like
 row separators but borderless columns) work out of the box:
 
 ```go
-settings := pdftable.DefaultTableSettings()
-settings.VerticalStrategy   = pdftable.StrategyText
-settings.HorizontalStrategy = pdftable.StrategyLines
+settings := pdfgrab.DefaultTableSettings()
+settings.VerticalStrategy   = pdfgrab.StrategyText
+settings.HorizontalStrategy = pdfgrab.StrategyLines
 tables, _ := page.ExtractTables(settings)
 ```
 
 The two outputs match cell-for-cell on the parity fixtures (see
 `testdata/golden/*.tables-text.expected.json` and
 `*.tables.expected.json` for the regression goldens). Field naming
-differs in the obvious places: pdftable returns a slice of `*Table`
+differs in the obvious places: pdfgrab returns a slice of `*Table`
 instead of `Table` objects you have to call `.extract()` on; rows are
 `[]string` instead of `list[Optional[str]]` (missing cells produce
 `""` rather than `nil`); and table bboxes use `(X0, Y0, X1, Y1)` PDF
@@ -389,32 +389,32 @@ user space rather than pdfplumber's image-space
 
 ## CLI
 
-`pdftable` ships a command-line interface that mirrors pdfplumber's
+`pdfgrab` ships a command-line interface that mirrors pdfplumber's
 CLI surface for the operations the library implements:
 
 ```sh
-go install github.com/hallelx2/pdftable/cmd/pdftable@v0.3.0
+go install github.com/hallelx2/pdfgrab/cmd/pdfgrab@v0.3.0
 ```
 
 Usage:
 
 ```sh
 # Extract every table on every page as JSON.
-pdftable extract invoice.pdf --tables --format json
+pdfgrab extract invoice.pdf --tables --format json
 
 # Borderless tables: use the text strategy.
-pdftable extract 10k.pdf --tables \
+pdfgrab extract 10k.pdf --tables \
     --vertical-strategy text --horizontal-strategy text \
     --min-words-vertical 4
 
 # Extract text only (no table detection).
-pdftable extract report.pdf --text --format text
+pdfgrab extract report.pdf --text --format text
 
 # Subset of pages, pretty-printed JSON.
-pdftable extract report.pdf --tables --pages 1,3-5 --indent 2
+pdfgrab extract report.pdf --tables --pages 1,3-5 --indent 2
 
 # Caller-supplied edges.
-pdftable extract statement.pdf --tables \
+pdfgrab extract statement.pdf --tables \
     --vertical-strategy explicit --horizontal-strategy explicit \
     --explicit-vertical-lines 100,200,300,400 \
     --explicit-horizontal-lines 600,650,700,720
@@ -455,20 +455,20 @@ with pdfplumber.open("report.pdf") as pdf:
 ```
 
 ```go
-// Go (pdftable)
-import "github.com/hallelx2/pdftable"
+// Go (pdfgrab)
+import "github.com/hallelx2/pdfgrab"
 
-doc, _ := pdftable.OpenFile("report.pdf")
+doc, _ := pdfgrab.OpenFile("report.pdf")
 defer doc.Close()
 page, _ := doc.Page(1)
 
-words, _ := page.Words(pdftable.DefaultWordOpts())
+words, _ := page.Words(pdfgrab.DefaultWordOpts())
 for _, w := range words {
-    // pdftable's Y is PDF user-space (origin bottom-left). The
+    // pdfgrab's Y is PDF user-space (origin bottom-left). The
     // pdfplumber-equivalent "top" is page.Height() - w.Y1.
     fmt.Println(w.Text, w.X0, page.Height()-w.Y1)
 }
-fmt.Println(must(page.ExtractText(pdftable.DefaultTextOpts())))
+fmt.Println(must(page.ExtractText(pdfgrab.DefaultTextOpts())))
 ```
 
 Three differences worth noting:
@@ -508,7 +508,7 @@ Behaviours that intentionally differ:
 - **Position precision now matches on the standard 14 fonts; residual
   drift is limited to embedded fonts that ship no metrics**.
   pdfplumber uses pdfminer.six's AFM tables for the standard 14 fonts.
-  pdftable now bundles the same Adobe Core 14 metrics, so a font that
+  pdfgrab now bundles the same Adobe Core 14 metrics, so a font that
   omits `/Widths` — which is spec-legal for those 14, and was previously
   the source of up to ~10pt of word-bbox drift — resolves to real
   per-glyph widths instead of a flat 500 guess. Common substitute names
@@ -545,8 +545,8 @@ Behaviours not yet ported:
 ## Architecture
 
 ```
-pdftable/
-├── pdftable.go        // Open / OpenBytes / OpenFile entry points
+pdfgrab/
+├── pdfgrab.go        // Open / OpenBytes / OpenFile entry points
 ├── pdf.go             // Document interface + implementation
 ├── page.go            // Page interface + implementation
 ├── char.go            // Public Char / Line / Rect / Curve / Objects
@@ -558,7 +558,7 @@ pdftable/
 ├── geometry.go        // BBox helpers: Union, Intersect, Contains, Snap
 ├── errors.go          // Sentinel errors
 ├── cmd/
-│   └── pdftable/      // Command-line interface (v0.3.0)
+│   └── pdfgrab/      // Command-line interface (v0.3.0)
 │       └── main.go
 └── internal/
     ├── layout/
@@ -572,7 +572,7 @@ pdftable/
         └── cmap.go        // ToUnicode CMap parser
 ```
 
-The public `pdftable` package is small and stable. The `internal/pdf`
+The public `pdfgrab` package is small and stable. The `internal/pdf`
 package owns the interpreter — its types are not exposed because they
 will evolve as more PDF features are added (Type 3 fonts, vertical
 writing, more exotic CMaps).
@@ -600,7 +600,7 @@ stdlib-only.
   strategies.
 - `v0.3.x` — remaining table strategies and CLI (this release):
   `text` (word-alignment edges), `explicit` (caller-supplied edges),
-  and a `pdftable` CLI mirroring pdfplumber's surface.
+  and a `pdfgrab` CLI mirroring pdfplumber's surface.
 - `v0.4.x` — bundle the standard-14 AFM metrics so word bboxes (and
   therefore cell text) match pdfplumber on standard fonts. **Done**: the
   Adobe Core 14 metrics ship, Symbol/ZapfDingbats decode with their own
@@ -620,7 +620,7 @@ stdlib-only.
 
 ## Repository layout
 
-`pdftable` is a single Go package, so its source lives in the repository
+`pdfgrab` is a single Go package, so its source lives in the repository
 root — that is the import path, and Go keeps `_test.go` files next to the
 code they cover.
 
@@ -629,7 +629,7 @@ code they cover.
 | `*.go` | the library |
 | `internal/pdf/` | content-stream interpreter, fonts, encodings |
 | `internal/layout/` | edge/intersection/cell geometry |
-| `cmd/pdftable/` | CLI |
+| `cmd/pdfgrab/` | CLI |
 | `bench/` | accuracy benchmarks against public datasets — a **separate Go module**, so it never adds a dependency here |
 | `docs/evaluations/` | dated measurement reports, with their caveats |
 | `scripts/` | fixture and golden-file generators |

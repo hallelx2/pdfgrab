@@ -1,13 +1,13 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable_test
+package pdfgrab_test
 
 import (
 	"strings"
 	"testing"
 
-	"github.com/hallelx2/pdftable"
+	"github.com/hallelx2/pdfgrab"
 )
 
 // The fixtures under testdata/fonts deliberately have NO pdfplumber
@@ -18,9 +18,9 @@ import (
 //
 // Regenerate the PDFs with: python scripts/gen_font_fixtures.py
 
-func openPage(t *testing.T, path string, n int) pdftable.Page {
+func openPage(t *testing.T, path string, n int) pdfgrab.Page {
 	t.Helper()
-	doc, err := pdftable.OpenFile(path)
+	doc, err := pdfgrab.OpenFile(path)
 	if err != nil {
 		t.Fatalf("OpenFile(%s): %v", path, err)
 	}
@@ -43,7 +43,7 @@ func openPage(t *testing.T, path string, n int) pdftable.Page {
 func TestSymbolFixtureDecoding(t *testing.T) {
 	t.Run("Symbol", func(t *testing.T) {
 		p := openPage(t, "testdata/fonts/symbol.pdf", 1)
-		text, err := p.ExtractText(pdftable.DefaultTextOpts())
+		text, err := p.ExtractText(pdfgrab.DefaultTextOpts())
 		if err != nil {
 			t.Fatalf("ExtractText: %v", err)
 		}
@@ -62,7 +62,7 @@ func TestSymbolFixtureDecoding(t *testing.T) {
 
 	t.Run("ZapfDingbats", func(t *testing.T) {
 		p := openPage(t, "testdata/fonts/symbol.pdf", 2)
-		text, err := p.ExtractText(pdftable.DefaultTextOpts())
+		text, err := p.ExtractText(pdfgrab.DefaultTextOpts())
 		if err != nil {
 			t.Fatalf("ExtractText: %v", err)
 		}
@@ -89,7 +89,7 @@ func TestSymbolFixtureDecoding(t *testing.T) {
 // silently corrupt text in any document that happens to use the name.
 func TestDifferencesFixtureDecoding(t *testing.T) {
 	p := openPage(t, "testdata/fonts/differences.pdf", 1)
-	text, err := p.ExtractText(pdftable.DefaultTextOpts())
+	text, err := p.ExtractText(pdfgrab.DefaultTextOpts())
 	if err != nil {
 		t.Fatalf("ExtractText: %v", err)
 	}
@@ -125,7 +125,7 @@ func TestDifferencesFixtureDecoding(t *testing.T) {
 // the coverage silently collapses again — so assert the breadth, not just
 // the output.
 func TestStandard14FixtureCoversEveryLatinFont(t *testing.T) {
-	doc, err := pdftable.OpenFile("testdata/golden/fonts-standard14.pdf")
+	doc, err := pdfgrab.OpenFile("testdata/golden/fonts-standard14.pdf")
 	if err != nil {
 		t.Fatalf("OpenFile: %v", err)
 	}

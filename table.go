@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Halleluyah Oludele
 // Licensed under the MIT License.
 
-package pdftable
+package pdfgrab
 
 // This file defines the public types of the table-finding pipeline:
 // TableSettings (with pdfplumber-matching defaults), Table (the
@@ -67,7 +67,7 @@ const (
 	// style, and the house style of most government and academic
 	// publishing — yields no ruling intersections at all, so "lines"
 	// finds nothing on either axis. On the ICDAR 2013 competition set
-	// that accounted for every document where pdftable detected no
+	// that accounted for every document where pdfgrab detected no
 	// table whatsoever: us-017 has 218 horizontal rules and 0 vertical,
 	// us-018 has 226 and 0, us-025 has 225 and 0.
 	//
@@ -227,8 +227,8 @@ type TableSettings struct {
 // DefaultTableSettings returns settings with the pdfplumber default
 // values pre-populated. The intended pattern is:
 //
-//	settings := pdftable.DefaultTableSettings()
-//	settings.VerticalStrategy = pdftable.StrategyLinesStrict
+//	settings := pdfgrab.DefaultTableSettings()
+//	settings.VerticalStrategy = pdfgrab.StrategyLinesStrict
 //	tables, err := page.ExtractTables(settings)
 //
 // pdfplumber's defaults (table.py lines 9-12, 486-503):
