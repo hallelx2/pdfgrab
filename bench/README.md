@@ -14,6 +14,7 @@ Each harness downloads what it needs into a scratch directory.
 | --- | --- | --- | --- |
 | [`icdar2013/`](icdar2013/) | ICDAR 2013 Table Competition (125 PDFs) | table detection + structure | [2026-08-02](../docs/evaluations/2026-08-02-icdar2013-table-structure.md) |
 | [`icdar2013/compare.py`](icdar2013/compare.py) | same, 13 systems | pdfgrab vs the whole field | [2026-09-17](../docs/evaluations/2026-09-17-field-comparison-and-metric-correction.md) |
+| [`icdar2013/sweep.py`](icdar2013/sweep.py) | same, pdfgrab configs only | whether a threshold explains a gap | [2026-09-17](../docs/evaluations/2026-09-17-region-gridding-threshold-sweep.md) |
 | [`icdar2013/oracle.py`](icdar2013/oracle.py) | same, with ground-truth boundaries | the ceiling a layout model could reach | [2026-08-03](../docs/evaluations/2026-08-03-hybrid-ceiling-oracle-boundaries.md) |
 
 ## Why the numbers live in `docs/evaluations/`

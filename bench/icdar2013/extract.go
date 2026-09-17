@@ -27,6 +27,9 @@ func main() {
 		"lines | text | mixed | auto | lines-then-mixed | fallback")
 	merge := flag.Bool("merge", false, "TableSettings.MergeSplitTokens")
 	detect := flag.Bool("detect", false, "TableSettings.DetectRegions (text-alignment region detection)")
+	minwv := flag.Int("minwv", 0, "TableSettings.MinWordsVertical (0 = leave default)")
+	minwh := flag.Int("minwh", 0, "TableSettings.MinWordsHorizontal (0 = leave default)")
+	pad := flag.Float64("pad", 0, "TextEdge.PadLines in average line heights (0 = default, negative = none)")
 	oracle := flag.String("oracle", "",
 		`JSON of per-page explicit edges: {"1":{"v":[..],"h":[..]}}`)
 	flag.Parse()
@@ -76,6 +79,18 @@ func main() {
 	if *detect {
 		for i := range attempts {
 			attempts[i].DetectRegions = true
+			attempts[i].TextEdge.PadLines = *pad
+		}
+	}
+
+	// Threshold overrides for the HAL-1363 sweep. Zero leaves whatever
+	// the strategy preset chose, so an unswept run is unaffected.
+	for i := range attempts {
+		if *minwv > 0 {
+			attempts[i].MinWordsVertical = *minwv
+		}
+		if *minwh > 0 {
+			attempts[i].MinWordsHorizontal = *minwh
 		}
 	}
 
