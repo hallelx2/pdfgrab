@@ -479,8 +479,26 @@ func (p *page) findTableEdges(s TableSettings) ([]layout.Edge, error) {
 	}
 
 	// Per-axis base edge derivation.
-	vEdges := p.baseEdges(vStrategy, layout.Vertical, lineLikeEdges, words, s)
-	hEdges := p.baseEdges(hStrategy, layout.Horizontal, lineLikeEdges, words, s)
+	//
+	// With region detection on, the text-derived axes are computed
+	// once per detected region instead of once per page. That is the
+	// whole difference: page-wide derivation has no notion of where a
+	// table is, so it grids prose as readily as a table. See
+	// DetectTextEdgeRegions.
+	var vEdges, hEdges []layout.Edge
+	if regions := p.detectedRegions(s, vStrategy, hStrategy, words); len(regions) > 0 {
+		for _, r := range regions {
+			inside := wordsInBBox(words, r)
+			if len(inside) == 0 {
+				continue
+			}
+			vEdges = append(vEdges, p.baseEdges(vStrategy, layout.Vertical, lineLikeEdges, inside, s)...)
+			hEdges = append(hEdges, p.baseEdges(hStrategy, layout.Horizontal, lineLikeEdges, inside, s)...)
+		}
+	} else {
+		vEdges = p.baseEdges(vStrategy, layout.Vertical, lineLikeEdges, words, s)
+		hEdges = p.baseEdges(hStrategy, layout.Horizontal, lineLikeEdges, words, s)
+	}
 
 	// Explicit overrides are added on top of whichever base set was
 	// chosen. With StrategyExplicit the base set is empty so the
@@ -985,6 +1003,47 @@ func charsInCellEdges(chars []Char, cell BBox, outerLeft, outerRight bool) []Cha
 		}
 		if in {
 			out = append(out, c)
+		}
+	}
+	return out
+}
+
+// detectedRegions runs text-alignment region detection when it is
+// enabled and can actually change the outcome.
+//
+// It returns nil — meaning "carry on page-wide" — whenever detection is
+// off, no axis is text-derived, or the page shows no sustained
+// alignment. A nil result is the safe answer: the caller falls back to
+// exactly the behaviour it had before.
+func (p *page) detectedRegions(s TableSettings, vStrategy, hStrategy TableStrategy, words []Word) []BBox {
+	if !s.DetectRegions {
+		return nil
+	}
+	// Only the text-derived strategies benefit. When an axis comes from
+	// drawn rulings, the rulings already bound the table, and clipping
+	// them to a text-derived region could only lose edges.
+	if vStrategy != StrategyText && hStrategy != StrategyText {
+		return nil
+	}
+	if len(words) == 0 {
+		return nil
+	}
+	return DetectTextEdgeRegions(words, s.TextEdge)
+}
+
+// wordsInBBox returns the words whose centre lies inside b.
+//
+// Centre rather than full containment: a word straddling the region
+// boundary belongs to the table if most of it does, and requiring total
+// containment would drop the first and last column of every region whose
+// padding lands mid-glyph.
+func wordsInBBox(words []Word, b BBox) []Word {
+	out := make([]Word, 0, len(words))
+	for _, w := range words {
+		cx := (w.X0 + w.X1) / 2
+		cy := (w.Y0 + w.Y1) / 2
+		if cx >= b.X0 && cx <= b.X1 && cy >= b.Y0 && cy <= b.Y1 {
+			out = append(out, w)
 		}
 	}
 	return out
