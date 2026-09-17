@@ -6,6 +6,14 @@
 **Verdict:** shipped as **opt-in**; does **not** become a default. The
 hypothesis it tested is disproved.
 
+> **Metric note, added 2026-09-17.** The F1 figures below are **pooled** —
+> every adjacency relation across the corpus scored in one batch. The ICDAR
+> 2013 protocol averages **per document**, which puts pdfgrab at **0.442** and
+> pdfplumber at **0.458** on the same data. These numbers are left as they were
+> measured; see
+> [2026-09-17](2026-09-17-field-comparison-and-metric-correction.md) for the
+> corrected metric and a comparison against the full field.
+
 ## Hypothesis
 
 The [ICDAR 2013 evaluation](2026-08-02-icdar2013-table-structure.md) found

@@ -608,13 +608,18 @@ stdlib-only.
   **0.0000pt on both axes** — the golden envelope is now asserted at
   0.01pt. See
   [the evaluation](docs/evaluations/2026-08-02-font-metrics-and-table-fidelity.md).
-- `v0.5.x` — **table detection**. The ICDAR 2013 benchmark puts
-  end-to-end F1 at 0.362, level with pdfplumber's 0.370, and the
-  diagnostic is unambiguous: precision 0.865, recall 0.229. What we
-  extract is right; we miss three quarters of the tables, because the
-  `lines` strategy needs *intersecting* rulings and a horizontally-ruled
-  table produces none. See
-  [the evaluation](docs/evaluations/2026-08-02-icdar2013-table-structure.md).
+- `v0.5.x` — **table detection**. Measured against ten systems on ICDAR
+  2013, pdfgrab's end-to-end F1 is **0.442** (per-document, the
+  competition's protocol) — fifth of ten, level with pdfplumber's 0.458,
+  and roughly **10x faster** than anything of comparable accuracy
+  (81 ms/doc against pdfplumber's 794). The diagnostic is unambiguous:
+  precision 0.545, recall 0.422. What we extract is right; we miss most
+  of the tables, because the `lines` strategy needs *intersecting*
+  rulings and a horizontally-ruled table produces none. Given a correct
+  grid the same extractor reaches **0.935**, so detection is the whole
+  gap. camelot's `stream` flavour reaches 0.762 recall on this corpus and
+  is the rule-based result worth porting. See
+  [the field comparison](docs/evaluations/2026-09-17-field-comparison-and-metric-correction.md).
 - `v0.6.x` — performance pass: parser speed against pdfminer.six and
   pdfplumber on a representative corpus.
 
