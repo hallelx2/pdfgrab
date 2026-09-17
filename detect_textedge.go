@@ -98,6 +98,18 @@ type TextEdgeOpts struct {
 
 	// LineTol is the vertical tolerance for grouping words into a line.
 	LineTol float64
+
+	// PadLines grows each detected region vertically by this many
+	// average line heights, so a header or trailing row sitting just
+	// outside the detected alignment is not clipped away.
+	//
+	// It trades recall for precision directly: too little and the first
+	// or last row is lost, too much and neighbouring prose is pulled
+	// into the region and gridded.
+	//
+	// Zero means the default, consistent with every other field here.
+	// Pass a negative value for no padding at all.
+	PadLines float64
 }
 
 // DefaultTextEdgeOpts returns the published parameters.
@@ -108,6 +120,7 @@ func DefaultTextEdgeOpts() TextEdgeOpts {
 		CoordTol:   0.5,
 		MinTextLen: 2,
 		LineTol:    2,
+		PadLines:   1,
 	}
 }
 
@@ -206,6 +219,13 @@ func withTextEdgeDefaults(o TextEdgeOpts) TextEdgeOpts {
 	}
 	if o.LineTol <= 0 {
 		o.LineTol = d.LineTol
+	}
+	switch {
+	case o.PadLines == 0:
+		o.PadLines = d.PadLines
+	case o.PadLines < 0:
+		// Explicitly no padding.
+		o.PadLines = 0
 	}
 	return o
 }
@@ -376,7 +396,7 @@ func regionsFromEdges(edges []*textEdge, lines []textLine, opts TextEdgeOpts) []
 		}
 	}
 
-	pad := averageLineHeight(lines)
+	pad := averageLineHeight(lines) * opts.PadLines
 
 	out := make([]BBox, 0, len(bands))
 	for _, b := range bands {

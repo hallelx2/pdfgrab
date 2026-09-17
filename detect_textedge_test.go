@@ -240,3 +240,29 @@ func TestIsDeterministic(t *testing.T) {
 		}
 	}
 }
+
+// PadLines follows the same zero-means-default rule as every other
+// field, with a negative value as the explicit "none". Getting this
+// backwards would silently disable padding for anyone using a partially
+// filled TextEdgeOpts.
+func TestPadLinesZeroMeansDefault(t *testing.T) {
+	ws := tableWords([]float64{72, 200, 330}, 6, 700, 20)
+
+	def := DetectTextEdgeRegions(ws, DefaultTextEdgeOpts())
+	zero := DetectTextEdgeRegions(ws, TextEdgeOpts{})
+	if len(def) != 1 || len(zero) != 1 {
+		t.Fatalf("expected one region each, got %d and %d", len(def), len(zero))
+	}
+	if math.Abs(def[0].Y0-zero[0].Y0) > 1e-9 || math.Abs(def[0].Y1-zero[0].Y1) > 1e-9 {
+		t.Errorf("zero PadLines did not fall back to the default: %v vs %v", zero[0], def[0])
+	}
+
+	none := DetectTextEdgeRegions(ws, TextEdgeOpts{PadLines: -1})
+	if len(none) != 1 {
+		t.Fatalf("expected one region with padding off, got %d", len(none))
+	}
+	if none[0].Y1 >= def[0].Y1 || none[0].Y0 <= def[0].Y0 {
+		t.Errorf("negative PadLines should shrink the region: %v vs default %v",
+			none[0], def[0])
+	}
+}

@@ -20,6 +20,7 @@ release history in [`CHANGELOG.md`](../CHANGELOG.md).
 
 | date | subject | headline |
 | --- | --- | --- |
+| [2026-09-17](evaluations/2026-09-17-region-gridding-threshold-sweep.md) | in-region gridding threshold sweep | **negative** — 12 configs, precision never leaves 0.28. Not a tuning problem; the gridding algorithm is |
 | [2026-09-17](evaluations/2026-09-17-text-edge-region-detection.md) | text-edge region detection (Nurminen) | **partial** — F1 0.245 → 0.337 over page-wide `text`, but below `lines` 0.442. Recall transferred, precision did not: gridding is now the bottleneck |
 | [2026-09-17](evaluations/2026-09-17-field-comparison-and-metric-correction.md) | the field, and a metric correction | **per-doc F1 0.442**, 5th of 10, ~10x faster than anything comparable. No Go library comes close. Earlier figures were pooled, not the competition's metric |
 | [2026-08-03](evaluations/2026-08-03-hybrid-ceiling-oracle-boundaries.md) | hybrid ceiling with oracle boundaries | **0.362 → 0.935.** Given a correct grid, extraction is near-perfect — structure is the whole gap |
