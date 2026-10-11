@@ -23,9 +23,9 @@ release history in [`CHANGELOG.md`](../CHANGELOG.md).
 | [2026-09-17](evaluations/2026-09-17-region-gridding-threshold-sweep.md) | in-region gridding threshold sweep | **negative** — 12 configs, precision never leaves 0.28. Not a tuning problem; the gridding algorithm is |
 | [2026-09-17](evaluations/2026-09-17-text-edge-region-detection.md) | text-edge region detection (Nurminen) | **partial** — F1 0.245 → 0.337 over page-wide `text`, but below `lines` 0.442. Recall transferred, precision did not: gridding is now the bottleneck |
 | [2026-09-17](evaluations/2026-09-17-field-comparison-and-metric-correction.md) | the field, and a metric correction | **per-doc F1 0.442**, 5th of 10, ~10x faster than anything comparable. No Go library comes close. Earlier figures were pooled, not the competition's metric |
-| [2026-08-03](evaluations/2026-08-03-hybrid-ceiling-oracle-boundaries.md) | hybrid ceiling with oracle boundaries | **0.362 → 0.935.** Given a correct grid, extraction is near-perfect — structure is the whole gap |
-| [2026-08-02](evaluations/2026-08-02-icdar2013-table-structure.md) | ICDAR 2013 table detection + structure | F1 0.362 end-to-end; the bottleneck is **detection**, not cell accuracy |
-| [2026-08-02](evaluations/2026-08-02-strategy-auto-negative-result.md) | `StrategyAuto` for one-axis-ruled tables | **negative result** — detection 22%→18% missed, but F1 0.362→0.358. Shipped opt-in only |
+| [2026-08-03](evaluations/2026-08-03-hybrid-ceiling-oracle-boundaries.md) | hybrid ceiling with oracle boundaries | **0.362 → 0.935** (0.362 is the pooled F1; per-document it is 0.442, see 2026-09-17). Given a correct grid, extraction is near-perfect — structure is the whole gap |
+| [2026-08-02](evaluations/2026-08-02-icdar2013-table-structure.md) | ICDAR 2013 table detection + structure | F1 0.362 end-to-end, pooled (per-document 0.442, see 2026-09-17); the bottleneck is **detection**, not cell accuracy |
+| [2026-08-02](evaluations/2026-08-02-strategy-auto-negative-result.md) | `StrategyAuto` for one-axis-ruled tables | **negative result** — detection 22%→18% missed, but pooled F1 0.362→0.358 (per-document 0.442→0.443, see 2026-09-17). Shipped opt-in only |
 | [2026-08-02](evaluations/2026-08-02-font-metrics-and-table-fidelity.md) | font metrics and table fidelity | position drift 11.99pt → **0.0000pt**; negative-sign loss 19% → **0%** |
 
 ### Conventions

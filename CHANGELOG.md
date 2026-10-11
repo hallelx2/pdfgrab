@@ -7,9 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Nothing yet.
+Checked 2026-10-11: the latest tag is `v0.4.0`. Neither 0.5.0 below nor
+these changes are tagged yet.
+
+### Changed (breaking)
+
+- The module is renamed from `github.com/hallelx2/pdftable` to
+  `github.com/hallelx2/pdfgrab`. Every existing tag (`v0.0.1` to `v0.4.0`)
+  declares the old path, so `go get github.com/hallelx2/pdfgrab@v0.4.0`
+  fails; use `@main` until a tag is cut under the new path.
+
+### Added
+
+- `DetectTextEdgeRegions` and `TextEdgeOpts`: opt-in table-region
+  detection from text alignment, after Nurminen's text-edge method.
+
+### Fixed
+
+- The ICDAR 2013 harness now reports the competition's per-document F1
+  alongside the pooled figure. The citable end-to-end F1 is 0.442
+  (pdfplumber 0.458), not the pooled 0.362 quoted under 0.5.0 below. See
+  `docs/evaluations/2026-09-17-field-comparison-and-metric-correction.md`.
 
 ## [0.5.0] - 2026-08-20
+
+*Not tagged. The ICDAR F1 figures in this entry are pooled; the
+per-document figures are 0.442 (pdfgrab) and 0.458 (pdfplumber).*
 
 Text fidelity, end to end. Real font metrics for the 14 standard PDF
 fonts, correct glyph geometry, cell content that no longer loses
