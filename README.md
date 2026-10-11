@@ -19,20 +19,46 @@ heuristics on. This is that.
 
 ## Status
 
-`v0.3.0` — full pdfplumber parity for table-finding strategies. All four
-canonical strategies are implemented: `lines`, `lines_strict`, `text`,
-and `explicit`. Mix and match per-axis (e.g. `vertical="text"` +
-`horizontal="lines"`) works as expected. Also ships the `pdfgrab`
-CLI for extracting text and tables without writing Go.
+pdfgrab was built for [Vectorless](https://github.com/hallelx2/vectorless-engine), which uses it to read every word on a PDF page with its rectangle. Vectorless's hosted service is closing (decided 2026-10-11) and the project, pdfgrab included, is open source and no longer actively developed. Contact: halleluyaholudele@gmail.com.
+
+All four pdfplumber table-finding strategies are implemented (`lines`, `lines_strict`, `text`, `explicit`), mixable per axis, plus the `pdfgrab` CLI.
+
+**Versions (checked 2026-10-11).**
+
+| | Module path | What it contains |
+|---|---|---|
+| `main` | `github.com/hallelx2/pdfgrab` | Everything below, plus the module rename (2026-08-21), the ICDAR metric correction and opt-in text-edge region detection (`DetectTextEdgeRegions`), 2026-09-17. |
+| 0.5.0 in [CHANGELOG](CHANGELOG.md) (2026-08-20) | | Standard-14 font metrics, glyph geometry, cell text at table edges, the first ICDAR 2013 evaluation. **Not tagged.** |
+| `v0.4.0` tag (2026-07-03), the latest tag | `github.com/hallelx2/pdftable` | Size-relative word gaps, explicit spaces. |
+
+Every tag from `v0.0.1` to `v0.4.0` was cut before the rename and declares the module as `github.com/hallelx2/pdftable`. `go get github.com/hallelx2/pdfgrab@v0.4.0` therefore fails with a module path mismatch. Use `main` until a tag exists under the new path. Vectorless's engine still imports `github.com/hallelx2/pdftable v0.4.0`.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/hallelx2/pdfgrab.svg)](https://pkg.go.dev/github.com/hallelx2/pdfgrab)
 [![CI](https://github.com/hallelx2/pdfgrab/actions/workflows/test.yml/badge.svg)](https://github.com/hallelx2/pdfgrab/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+## Benchmarks
+
+Each figure links to the dated report that measured it. The full list is in [docs/](docs/README.md).
+
+| Claim | Number | Date | Report |
+|---|---|---|---|
+| Table detection and structure, end to end, ICDAR 2013 (125 PDFs), per-document F1 (the competition's metric) | pdfgrab 0.442, pdfplumber 0.458; 5th of 10 systems | 2026-09-17 | [field comparison](docs/evaluations/2026-09-17-field-comparison-and-metric-correction.md) |
+| Speed on the same run | 81 ms per document, pdfplumber 794 ms | 2026-09-17 | [field comparison](docs/evaluations/2026-09-17-field-comparison-and-metric-correction.md) |
+| Given a correct table grid (the region and boundaries supplied) | 0.935 | 2026-08-03 | [hybrid ceiling](docs/evaluations/2026-08-03-hybrid-ceiling-oracle-boundaries.md) |
+| Word positions against pdfplumber (golden fixtures), and minus signs on the 3M 2018 10-K, pages 56–60 | 0.0000 pt drift on both axes; minus signs kept 103/103 (was 83/103) | 2026-08-02 | [font metrics and table fidelity](docs/evaluations/2026-08-02-font-metrics-and-table-fidelity.md) |
+
+What these do not show:
+
+- Reports before 2026-09-17 quote **0.362**. That was the pooled F1 over all relations in the corpus, not the competition's per-document average. The per-document figure is 0.442. The older reports are kept as written, with a pointer to the correction.
+- The 0.935 is a different regime from the end-to-end 0.442: the table region and its grid are given. The two are not comparable.
+- The 0.0000 pt and 103/103 figures measure agreement with pdfplumber, not ground truth.
+- Nothing here covers scanned documents or CJK text.
+
 ## Install
 
 ```sh
-go get github.com/hallelx2/pdfgrab@v0.3.0
+go get github.com/hallelx2/pdfgrab@main
 ```
 
 Requires Go 1.25+ (uses the standard-library `iter` package for the `Pages()` range-over-func iterator, and pdfcpu v0.12+).
@@ -393,7 +419,7 @@ user space rather than pdfplumber's image-space
 CLI surface for the operations the library implements:
 
 ```sh
-go install github.com/hallelx2/pdfgrab/cmd/pdfgrab@v0.3.0
+go install github.com/hallelx2/pdfgrab/cmd/pdfgrab@main
 ```
 
 Usage:
@@ -590,38 +616,38 @@ codecs we don't strictly need), the blast radius of swapping it out is
 limited to `internal/pdf/reader.go`. The rest of the package is
 stdlib-only.
 
-## Roadmap
+## History and what was next
 
-- `v0.0.x` — content-stream primitives.
-- `v0.1.x` — text extraction: `Page.ExtractText`, `Page.Words`,
+Release history is in [CHANGELOG.md](CHANGELOG.md). In short:
+
+- `v0.0.x`: content-stream primitives.
+- `v0.1.x`: text extraction: `Page.ExtractText`, `Page.Words`,
   `Page.ExtractTextSimple`.
-- `v0.2.x` — table finding via ruling lines: `Page.FindTables` /
+- `v0.2.x`: table finding via ruling lines: `Page.FindTables` /
   `Page.ExtractTables` covering the `lines` and `lines_strict`
   strategies.
-- `v0.3.x` — remaining table strategies and CLI (this release):
-  `text` (word-alignment edges), `explicit` (caller-supplied edges),
-  and a `pdfgrab` CLI mirroring pdfplumber's surface.
-- `v0.4.x` — bundle the standard-14 AFM metrics so word bboxes (and
-  therefore cell text) match pdfplumber on standard fonts. **Done**: the
-  Adobe Core 14 metrics ship, Symbol/ZapfDingbats decode with their own
-  built-in encodings, and measured position drift against pdfplumber is
-  **0.0000pt on both axes** — the golden envelope is now asserted at
-  0.01pt. See
+- `v0.3.x`: the `text` (word-alignment edges) and `explicit`
+  (caller-supplied edges) strategies, and the `pdfgrab` CLI.
+- `v0.4.0`: word gaps relative to font size, and the PDF's own spaces
+  honoured as word boundaries.
+- 0.5.0 (on `main`, not tagged): the Adobe Core 14 metrics ship,
+  Symbol/ZapfDingbats decode with their own encodings, and position drift
+  against pdfplumber is 0.0000 pt on both axes. See
   [the evaluation](docs/evaluations/2026-08-02-font-metrics-and-table-fidelity.md).
-- `v0.5.x` — **table detection**. Measured against ten systems on ICDAR
-  2013, pdfgrab's end-to-end F1 is **0.442** (per-document, the
-  competition's protocol) — fifth of ten, level with pdfplumber's 0.458,
-  and roughly **10x faster** than anything of comparable accuracy
-  (81 ms/doc against pdfplumber's 794). The diagnostic is unambiguous:
-  precision 0.545, recall 0.422. What we extract is right; we miss most
-  of the tables, because the `lines` strategy needs *intersecting*
-  rulings and a horizontally-ruled table produces none. Given a correct
-  grid the same extractor reaches **0.935**, so detection is the whole
-  gap. camelot's `stream` flavour reaches 0.762 recall on this corpus and
-  is the rule-based result worth porting. See
-  [the field comparison](docs/evaluations/2026-09-17-field-comparison-and-metric-correction.md).
-- `v0.6.x` — performance pass: parser speed against pdfminer.six and
-  pdfplumber on a representative corpus.
+- After 0.5.0 (on `main`): the module rename, the
+  [field comparison](docs/evaluations/2026-09-17-field-comparison-and-metric-correction.md)
+  and opt-in text-edge region detection.
+
+What was planned next, and is now unlikely to be done by this project:
+**table detection**. Precision is 0.545 and recall 0.422, so most missed
+tables are never found, because the `lines` strategy needs intersecting
+rulings and a horizontally ruled table has none. camelot's `stream` flavour
+reaches 0.762 recall on the same corpus. The first port of its text-edge
+detector raised F1 over page-wide `text` from 0.245 to 0.337 but stays below
+`lines` ([report](docs/evaluations/2026-09-17-text-edge-region-detection.md)),
+and a threshold sweep showed the gridding step, not tuning, is the limit
+([report](docs/evaluations/2026-09-17-region-gridding-threshold-sweep.md)).
+A performance pass against pdfminer.six was also planned.
 
 ## Repository layout
 
