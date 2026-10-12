@@ -28,7 +28,7 @@ func TestCharsHelloWorld(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 
 	p, err := doc.Page(1)
 	if err != nil {
@@ -93,7 +93,7 @@ func TestRectsRulings(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 
 	p, err := doc.Page(1)
 	if err != nil {
@@ -155,7 +155,7 @@ func TestObjectsAggregator(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, _ := doc.Page(1)
 	objs, err := p.Objects()
 	if err != nil {
@@ -183,7 +183,7 @@ func TestRealWorldSimplePDF(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenFile: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	if doc.NumPages() < 1 {
 		t.Fatalf("NumPages = %d, want >= 1", doc.NumPages())
 	}

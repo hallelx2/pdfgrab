@@ -278,9 +278,3 @@ func dedupeChars(chars []Char, tolerance float64, extraAttrs []string) []Char {
 	}
 	return out
 }
-
-// float64Bits is a tiny re-export point that consolidates the math.
-// Float64bits dependency so other tests/files don't have to import
-// "math" just to compare floats. Left as a package-private helper for
-// now — only dedupeChars's key construction uses it.
-func float64Bits(f float64) uint64 { return math.Float64bits(f) }

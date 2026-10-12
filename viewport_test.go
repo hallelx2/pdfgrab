@@ -100,7 +100,7 @@ func TestViewportOnRealCitation(t *testing.T) {
 	if err != nil {
 		t.Skipf("fixture unavailable: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, err := doc.Page(1)
 	if err != nil {
 		t.Fatalf("Page: %v", err)

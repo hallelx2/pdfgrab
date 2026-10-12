@@ -318,28 +318,6 @@ func sharesKey(a, b []edgeSharedKey) bool {
 	return false
 }
 
-// edgeConnects reports whether p1 and p2 share an edge — i.e. lie on
-// the same merged ruler. This is the predicate pdfplumber uses to
-// distinguish "two points on the same line" from "two points on
-// parallel lines that happen to align".
-//
-// p1 and p2 must share an axis (same X for vertical-shared, same Y
-// for horizontal-shared); the function returns false otherwise.
-//
-// This is the convenience entry point used by tests and any caller
-// that has only the two Intersection values. The cell finder uses the
-// pre-computed edge-key form (sharesKey on gridNode slices) on its hot
-// path instead, so it never re-walks the raw edge slices per pair.
-func edgeConnects(p1, p2 Intersection) bool {
-	if p1.X == p2.X && sharesKey(dedupEdgeKeys(p1.V), dedupEdgeKeys(p2.V)) {
-		return true
-	}
-	if p1.Y == p2.Y && sharesKey(dedupEdgeKeys(p1.H), dedupEdgeKeys(p2.H)) {
-		return true
-	}
-	return false
-}
-
 // intersectionsToCells is the Go port of pdfplumber's
 // intersections_to_cells. Given the intersection list, return the
 // smallest closed rectangle anchored at each intersection — that's

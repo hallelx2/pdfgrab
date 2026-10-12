@@ -374,20 +374,6 @@ func (p *page) Objects() (Objects, error) {
 	}, nil
 }
 
-// charsJoinedText is a tiny helper used by tests to assemble a Chars
-// slice back into a string ignoring positioning. It is NOT a real
-// text-extraction algorithm — Page.ExtractText (Phase 1.3.B) will
-// sort by Y/X with line breaks; this is just for the smoke tests
-// here in 1.3.A that need to assert "this page has the right glyphs
-// in roughly the right order".
-func charsJoinedText(chars []Char) string {
-	var sb strings.Builder
-	for _, c := range chars {
-		sb.WriteString(c.Text)
-	}
-	return sb.String()
-}
-
 // findTableEdges derives the input-edge slice for the table-finding
 // pipeline from the page's primitives. The pipeline:
 //

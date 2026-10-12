@@ -235,7 +235,7 @@ func TestExtractTextLayoutPreservesIndentation(t *testing.T) {
 	}
 	// Find the lines: AB should be at a column < CD's column.
 	lines := strings.Split(out, "\n")
-	var abCol, cdCol int = -1, -1
+	abCol, cdCol := -1, -1
 	for _, l := range lines {
 		if i := strings.Index(l, "AB"); i >= 0 && abCol < 0 {
 			abCol = i
@@ -257,7 +257,7 @@ func TestPageExtractTextLayout(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, _ := doc.Page(1)
 
 	opts := DefaultTextOpts()
@@ -279,7 +279,7 @@ func TestPageWordsHelloWorld(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open hello: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, _ := doc.Page(1)
 
 	words, err := p.Words(DefaultWordOpts())
@@ -310,7 +310,7 @@ func TestPageExtractTextHelloWorld(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, _ := doc.Page(1)
 
 	got, err := p.ExtractText(DefaultTextOpts())
@@ -327,7 +327,7 @@ func TestPageExtractTextSimple(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, _ := doc.Page(1)
 
 	got, err := p.ExtractTextSimple(3, 3)

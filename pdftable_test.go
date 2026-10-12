@@ -21,7 +21,7 @@ func TestOpenAndCount(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	if doc.NumPages() != 1 {
 		t.Fatalf("NumPages = %d, want 1", doc.NumPages())
 	}
@@ -45,7 +45,7 @@ func TestOpenReader(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Open: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	if doc.NumPages() != 1 {
 		t.Fatalf("NumPages = %d, want 1", doc.NumPages())
 	}
@@ -57,7 +57,7 @@ func TestPagesIterator(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	count := 0
 	var seen []int
 	for n, p := range doc.Pages() {
@@ -82,7 +82,7 @@ func TestPageOutOfRange(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 
 	cases := []int{0, -1, 2, 100}
 	for _, n := range cases {

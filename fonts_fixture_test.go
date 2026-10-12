@@ -24,7 +24,7 @@ func openPage(t *testing.T, path string, n int) pdfgrab.Page {
 	if err != nil {
 		t.Fatalf("OpenFile(%s): %v", path, err)
 	}
-	t.Cleanup(func() { doc.Close() })
+	t.Cleanup(func() { closeDoc(t, doc) })
 	p, err := doc.Page(n)
 	if err != nil {
 		t.Fatalf("Page(%d): %v", n, err)
@@ -129,7 +129,7 @@ func TestStandard14FixtureCoversEveryLatinFont(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenFile: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 
 	want := []string{
 		"Helvetica", "Helvetica-Bold", "Helvetica-Oblique", "Helvetica-BoldOblique",
