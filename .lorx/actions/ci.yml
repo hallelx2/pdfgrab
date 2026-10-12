@@ -1,0 +1,39 @@
+# CI run by Lorx's engine: `bit run --all` here, or a Lorx runner on push.
+# GitHub Actions on this account cannot start jobs (HAL-1712), so this is the merge gate.
+# Jobs run in container images so a runner needs only docker or podman, not a Go toolchain.
+# GOFLAGS=-buildvcs=false: the checkout is owned by the runner's user, not the container's,
+# so git refuses it and Go's VCS stamping fails the build.
+# bench/ is a separate Go module and is not covered by ./... here.
+
+fmt:
+  image: golang:1.25
+  env: { GOFLAGS: -buildvcs=false }
+  run: 'test -z "$(gofmt -l .)"'
+
+vet:
+  image: golang:1.25
+  env: { GOFLAGS: -buildvcs=false }
+  run: go vet ./...
+  timeout: 20m
+
+build:
+  needs: [fmt]
+  image: golang:1.25
+  env: { GOFLAGS: -buildvcs=false }
+  run: go build ./...
+  timeout: 20m
+
+lint:
+  needs: [build]
+  image: golangci/golangci-lint:v2.14.0
+  env: { GOFLAGS: -buildvcs=false }
+  run: golangci-lint run ./...
+  timeout: 20m
+
+test:
+  needs: [vet, build]
+  image: golang:1.25
+  env: { GOFLAGS: -buildvcs=false }
+  # -race matches the GitHub workflow (.github/workflows/test.yml).
+  run: go test -race -count=1 ./...
+  timeout: 30m
