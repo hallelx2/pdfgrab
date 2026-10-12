@@ -40,16 +40,12 @@ func NewReader(data []byte) (*Reader, error) {
 	if err != nil {
 		return nil, fmt.Errorf("pdfgrab: read: %w", err)
 	}
-	if ctx.Encrypt != nil && ctx.E != nil {
-		// pdfcpu auto-decrypts with the configured password (empty by
-		// default). If decryption succeeded ctx.EncKey will be set
-		// and the streams have already been decrypted in place; only
-		// fail when we can SEE the encrypt dict but ctx couldn't
-		// resolve the key. This is the pragmatic split between
-		// "encrypted PDF that's actually openable" (we go ahead and
-		// process it) and "encrypted PDF that needs a real password"
-		// (we surface ErrEncrypted).
-	}
+	// Encryption needs no branch here. pdfcpu decrypts with the configured
+	// password, which is empty by default, so a document that has only an
+	// owner password opens and its streams are already decrypted in place.
+	// A document that needs a user password makes ReadContext fail with
+	// "please provide the correct password", which the public package
+	// turns into ErrEncrypted. TestEncryptedDocuments pins both cases.
 	if err := ctx.EnsurePageCount(); err != nil {
 		return nil, fmt.Errorf("pdfgrab: page count: %w", err)
 	}
