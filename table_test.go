@@ -346,7 +346,7 @@ func TestExtractTables_RuledFixture(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 
 	p, err := doc.Page(1)
 	if err != nil {
@@ -402,7 +402,7 @@ func TestExtractTables_MaxEdgesPerAxisCapSuppressesTable(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, _ := doc.Page(1)
 
 	// Sanity: with the default cap the fixture yields exactly one table.
@@ -431,7 +431,7 @@ func TestExtractTables_MaxIntersectionsCapSuppressesTable(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, _ := doc.Page(1)
 
 	settings := DefaultTableSettings()
@@ -453,7 +453,7 @@ func TestExtractTables_NegativeCapDisables(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, _ := doc.Page(1)
 
 	settings := DefaultTableSettings()
@@ -497,7 +497,7 @@ func TestExtractTables_UnknownStrategyReturnsErrUnsupported(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, _ := doc.Page(1)
 
 	settings := DefaultTableSettings()
@@ -522,7 +522,7 @@ func TestExtractTables_ExplicitWithoutCoordinatesReturnsError(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, _ := doc.Page(1)
 
 	settings := DefaultTableSettings()
@@ -545,7 +545,7 @@ func TestFindTables_NoEdgesReturnsEmpty(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, _ := doc.Page(1)
 	finders, err := p.FindTables(DefaultTableSettings())
 	if err != nil {
@@ -759,7 +759,7 @@ func TestExtractTables_BorderlessTextStrategy(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, err := doc.Page(1)
 	if err != nil {
 		t.Fatalf("Page(1): %v", err)
@@ -809,7 +809,7 @@ func TestExtractTables_ExplicitStrategy(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, err := doc.Page(1)
 	if err != nil {
 		t.Fatalf("Page(1): %v", err)
@@ -848,7 +848,7 @@ func TestExtractTables_MixedStrategy(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenBytes: %v", err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 	p, err := doc.Page(1)
 	if err != nil {
 		t.Fatalf("Page(1): %v", err)

@@ -35,7 +35,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("OpenFile %s: %v", path, err)
 	}
-	defer doc.Close()
+	defer func() {
+		if err := doc.Close(); err != nil {
+			log.Printf("Close: %v", err)
+		}
+	}()
 
 	page, err := doc.Page(1)
 	if err != nil {

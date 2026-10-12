@@ -17,7 +17,7 @@ func allText(t *testing.T, path string) string {
 	if err != nil {
 		t.Fatalf("open %s: %v", path, err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 
 	var sb strings.Builder
 	for p := 1; p <= doc.NumPages(); p++ {

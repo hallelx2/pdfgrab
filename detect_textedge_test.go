@@ -71,9 +71,10 @@ func TestRejectsProse(t *testing.T) {
 		for w := 0; w < 8; w++ {
 			// Word widths vary, so interior positions never line up.
 			text := "lorem"
-			if (i+w)%3 == 0 {
+			switch (i + w) % 3 {
+			case 0:
 				text = "ipsumdolor"
-			} else if (i+w)%3 == 1 {
+			case 1:
 				text = "sit"
 			}
 			ws = append(ws, word(text, x, y))

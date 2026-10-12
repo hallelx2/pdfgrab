@@ -329,7 +329,7 @@ func extractWordsFromChars(chars []Char, opts WordOpts) []Word {
 	}
 
 	// Step 1/2: filter blanks (unless KeepBlankChars) and empties.
-	filtered := chars
+	var filtered []Char
 	if !opts.KeepBlankChars {
 		out := make([]Char, 0, len(chars))
 		for _, c := range chars {

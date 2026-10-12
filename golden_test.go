@@ -206,7 +206,7 @@ func runGoldenTablesCaseSuffix(t *testing.T, dir, stem, suffix string, settings 
 	if err != nil {
 		t.Fatalf("OpenFile %s: %v", pdfPath, err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 
 	for _, expPage := range g.Pages {
 		p, err := doc.Page(expPage.Number)
@@ -276,7 +276,7 @@ func runGoldenCase(t *testing.T, dir, stem string) {
 	if err != nil {
 		t.Fatalf("OpenFile %s: %v", pdfPath, err)
 	}
-	defer doc.Close()
+	defer closeDoc(t, doc)
 
 	if doc.NumPages() != len(g.Pages) {
 		t.Fatalf("page count: got %d, want %d", doc.NumPages(), len(g.Pages))

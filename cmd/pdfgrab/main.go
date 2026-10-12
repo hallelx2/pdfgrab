@@ -65,27 +65,26 @@ func main() {
 // capture output without spawning a process.
 func run(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		printUsage(stderr)
+		_ = printUsage(stderr) // best effort: the returned error is what matters
 		return fmt.Errorf("missing subcommand")
 	}
 	switch args[0] {
 	case "extract":
 		return runExtract(args[1:], stdout, stderr)
 	case "-h", "--help", "help":
-		printUsage(stdout)
-		return nil
+		return printUsage(stdout)
 	case "version", "-v", "--version":
-		fmt.Fprintln(stdout, "pdfgrab "+version)
-		return nil
+		_, err := fmt.Fprintln(stdout, "pdfgrab "+version)
+		return err
 	default:
-		printUsage(stderr)
+		_ = printUsage(stderr) // best effort: the returned error is what matters
 		return fmt.Errorf("unknown subcommand %q", args[0])
 	}
 }
 
 // printUsage prints the top-level usage string.
-func printUsage(w io.Writer) {
-	fmt.Fprintln(w, `pdfgrab — extract text and tables from PDFs
+func printUsage(w io.Writer) error {
+	_, err := fmt.Fprintln(w, `pdfgrab — extract text and tables from PDFs
 
 USAGE:
   pdfgrab extract <file.pdf> [flags]
@@ -101,6 +100,7 @@ EXTRACT FLAGS (run 'pdfgrab extract --help' for full list):
   --horizontal-strategy S  Same set, default "lines".
 
 Documentation: https://github.com/hallelx2/pdfgrab`)
+	return err
 }
 
 // extractFlags is the parsed flag set for the extract subcommand.
@@ -126,7 +126,7 @@ type extractFlags struct {
 
 // runExtract parses extract-subcommand args, opens the PDF, and
 // dispatches to the requested output mode.
-func runExtract(args []string, stdout, stderr io.Writer) error {
+func runExtract(args []string, stdout, stderr io.Writer) (err error) {
 	fs := flag.NewFlagSet("extract", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 
@@ -183,7 +183,11 @@ func runExtract(args []string, stdout, stderr io.Writer) error {
 	if err != nil {
 		return err
 	}
-	defer doc.Close()
+	defer func() {
+		if cerr := doc.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
 
 	pageNums, err := parsePages(f.pages, doc.NumPages())
 	if err != nil {
@@ -429,18 +433,19 @@ func emitTables(doc pdfgrab.Document, pages []int, settings pdfgrab.TableSetting
 	if f.format == "text" {
 		// One line per cell, blank line between rows, "---" between
 		// tables, page-number header before each page.
+		ew := &errWriter{w: w}
 		for _, p := range out.Pages {
-			fmt.Fprintf(w, "=== Page %d (%g x %g) ===\n", p.Number, p.Width, p.Height)
+			ew.printf("=== Page %d (%g x %g) ===\n", p.Number, p.Width, p.Height)
 			for ti, t := range p.Tables {
 				if ti > 0 {
-					fmt.Fprintln(w, "---")
+					ew.printf("---\n")
 				}
 				for _, row := range t.Rows {
-					fmt.Fprintln(w, strings.Join(row, "\t"))
+					ew.printf("%s\n", strings.Join(row, "\t"))
 				}
 			}
 		}
-		return nil
+		return ew.err
 	}
 
 	enc := json.NewEncoder(w)
@@ -486,17 +491,33 @@ func emitText(doc pdfgrab.Document, pages []int, f extractFlags, w io.Writer) er
 		})
 	}
 	if f.format == "text" {
+		ew := &errWriter{w: w}
 		for i, p := range out.Pages {
 			if i > 0 {
-				fmt.Fprint(w, "\f")
+				ew.printf("\f")
 			}
-			fmt.Fprintln(w, p.Text)
+			ew.printf("%s\n", p.Text)
 		}
-		return nil
+		return ew.err
 	}
 	enc := json.NewEncoder(w)
 	if f.indent > 0 {
 		enc.SetIndent("", strings.Repeat(" ", f.indent))
 	}
 	return enc.Encode(out)
+}
+
+// errWriter keeps the first write error and skips every write after it,
+// so a long run of output lines can report a closed pipe or a full disk
+// once, at the end, instead of checking each line.
+type errWriter struct {
+	w   io.Writer
+	err error
+}
+
+func (e *errWriter) printf(format string, a ...any) {
+	if e.err != nil {
+		return
+	}
+	_, e.err = fmt.Fprintf(e.w, format, a...)
 }

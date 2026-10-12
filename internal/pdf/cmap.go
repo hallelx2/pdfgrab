@@ -5,7 +5,6 @@ package pdf
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 	"unicode/utf16"
@@ -420,35 +419,4 @@ func hexDigit(c byte) (int, bool) {
 	default:
 		return 0, false
 	}
-}
-
-// Debug helper: format tokens as a string. Useful for tests when a
-// CMap doesn't parse the way you expect.
-func dumpTokens(toks []cmapTok) string {
-	var sb strings.Builder
-	for _, t := range toks {
-		switch t.kind {
-		case tokHex:
-			sb.WriteString(fmt.Sprintf("<%x> ", t.raw))
-		case tokLiteralString:
-			sb.WriteString(fmt.Sprintf("(%s) ", t.text))
-		case tokName:
-			sb.WriteString(fmt.Sprintf("/%s ", t.text))
-		case tokNumber:
-			sb.WriteString(t.text)
-			sb.WriteByte(' ')
-		case tokKeyword:
-			sb.WriteString(t.text)
-			sb.WriteByte(' ')
-		case tokArrayBegin:
-			sb.WriteString("[ ")
-		case tokArrayEnd:
-			sb.WriteString("] ")
-		case tokDictBegin:
-			sb.WriteString("<< ")
-		case tokDictEnd:
-			sb.WriteString(">> ")
-		}
-	}
-	return strings.TrimSpace(sb.String())
 }
