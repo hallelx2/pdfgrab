@@ -32,7 +32,7 @@
 
 ## Status
 
-pdfgrab was written for [Vectorless](https://github.com/hallelx2/vectorless-engine). The hosted Vectorless service has been paused since 12 October 2026, and pdfgrab stays open source like the engine it was written for. Issues and pull requests are read, but replies may be slow. For anything else, write to halleluyaholudele@gmail.com.
+pdfgrab was written for [Vectorless](https://github.com/hallelx2/vectorless-engine). The hosted Vectorless service has been paused since 12 October 2026, with its data backed up and its infrastructure kept as code so it can come back. pdfgrab stays open source like the engine it was written for. Development is slow while the service is paused: issues and pull requests are read, but replies may take a while. For anything else, write to halleluyaholudele@gmail.com.
 
 All four pdfplumber table strategies are implemented (`lines`, `lines_strict`, `text`, `explicit`) and can be mixed per axis. There is also an opt-in `auto` strategy, opt-in text-edge region detection and a `pdfgrab` CLI.
 
