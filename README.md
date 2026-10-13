@@ -13,7 +13,7 @@
   <a href="go.mod"><img alt="Go version" src="https://img.shields.io/badge/go-%3E%3D1.25-00ADD8?logo=go&logoColor=white"/></a>
   <img alt="ICDAR 2013: 0.442 F1 per document" src="https://img.shields.io/badge/ICDAR%202013-0.442%20F1%20per%20document-ff5a00"/>
   <img alt="81 ms per document" src="https://img.shields.io/badge/speed-81%20ms%20per%20document-18181b"/>
-  <img alt="Status: open source, not maintained" src="https://img.shields.io/badge/status-open%20source%2C%20not%20maintained-lightgrey"/>
+  <img alt="Status: open source" src="https://img.shields.io/badge/status-open%20source-lightgrey"/>
 </p>
 
 <p align="center">
@@ -32,7 +32,7 @@
 
 ## Status
 
-pdfgrab was written for [Vectorless](https://github.com/hallelx2/vectorless-engine). The hosted Vectorless service is closing (decided 2026-10-11), and pdfgrab, like the rest of the project, is open source and no longer actively developed. Issues and pull requests may not get a reply. For anything else, write to halleluyaholudele@gmail.com.
+pdfgrab was written for [Vectorless](https://github.com/hallelx2/vectorless-engine). The hosted Vectorless service has been paused since 12 October 2026, with its data backed up and its infrastructure kept as code so it can come back. pdfgrab stays open source like the engine it was written for. Development is slow while the service is paused: issues and pull requests are read, but replies may take a while. For anything else, write to halleluyaholudele@gmail.com.
 
 All four pdfplumber table strategies are implemented (`lines`, `lines_strict`, `text`, `explicit`) and can be mixed per axis. There is also an opt-in `auto` strategy, opt-in text-edge region detection and a `pdfgrab` CLI.
 
