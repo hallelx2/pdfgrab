@@ -5,7 +5,8 @@
 | [`evaluations/`](evaluations/) | dated accuracy findings — what was measured, against what, and what it does not prove |
 
 A seven-part written account of this work — *Reading a PDF like a printer* —
-is published on the [Vectorless blog](https://github.com/hallelx2/vectorless/tree/main/apps/blogs/content/posts).
+is published on the [Vectorless blog](https://blogs.vectorless.store), starting with
+[A PDF is not a document](https://blogs.vectorless.store/posts/a-pdf-is-not-a-document).
 It narrates what the evaluation reports measure.
 
 The prose lives there rather than here on purpose. It existed in both
